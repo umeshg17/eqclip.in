@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Umesh Gaikwad — Portfolio</title>
+  <meta name="description" content="Portfolio of Umesh Gaikwad — DevOps, Kubernetes, CI/CD, Cloud, and music enthusiast.">
+  <meta property="og:title" content="Umesh Gaikwad — Portfolio">
+  <meta property="og:description" content="DevOps • Kubernetes • CI/CD • Cloud">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0ea5e9">
+  <style>
+    :root{
+      --bg:#0b0c10; /* dark base */
+      --bg-soft:#11131a;
+      --card:#141824;
+      --text:#e7e9ee;
+      --muted:#a6adbb;
+      --accent:#0ea5e9;
+      --accent-2:#22c55e;
+      --border:rgba(255,255,255,0.08);
+      --shadow:rgba(0,0,0,0.35);
+    }
+    .light{ --bg:#f7f8fb; --bg-soft:#ffffff; --card:#ffffff; --text:#0b1320; --muted:#5b6473; --border:rgba(0,0,0,0.08); --shadow:rgba(0,0,0,0.08);}  
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:var(--bg); color:var(--text); line-height:1.65}
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; display:block}
+    .container{max-width:1100px; padding:0 20px; margin:0 auto}
+    header{position:sticky; top:0; z-index:50; backdrop-filter:saturate(180%) blur(12px); background:color-mix(in oklab, var(--bg) 70%, transparent); border-bottom:1px solid var(--border)}
+    .nav{display:flex; align-items:center; justify-content:space-between; height:64px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700}
+    .brand-dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+    .nav a{opacity:.85; padding:.35rem .6rem; border-radius:.6rem}
+    .nav a:hover{background:var(--border)}
+    .btn{display:inline-flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,var(--accent),#3b82f6); color:white; border:none; padding:.8rem 1rem; border-radius:.8rem; box-shadow:0 8px 24px var(--shadow); font-weight:600}
+    .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--border); box-shadow:none}
+    .hero{padding:72px 0 32px}
+    .hero-inner{display:grid; grid-template-columns:1.35fr 1fr; gap:28px; align-items:center}
+    .pill{display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--border); padding:.35rem .6rem; border-radius:9999px; font-size:.9rem; color:var(--muted)}
+    h1{font-size:clamp(2rem,4vw,3rem); margin:.35rem 0 .75rem; line-height:1.1}
+    .kicker{color:var(--muted); margin-bottom:1.25rem}
+    .stack{display:flex; gap:12px; flex-wrap:wrap}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 8px 32px var(--shadow)}
+    section{padding:48px 0}
+    .grid{display:grid; gap:18px}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .tag{display:inline-block; font-size:.85rem; padding:.35rem .6rem; border:1px solid var(--border); border-radius:999px; color:var(--muted)}
+    .muted{color:var(--muted)}
+    .footer{padding:36px 0; border-top:1px solid var(--border); color:var(--muted); text-align:center}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Liberation Mono","DejaVu Sans Mono",monospace; font-size:.85rem; border:1px solid var(--border); padding:.1rem .35rem; border-radius:.4rem}
+    .project{transition:transform .2s ease}
+    .project:hover{transform:translateY(-2px)}
+    .timeline{border-left:2px solid var(--border); padding-left:16px}
+    .tl-item{position:relative; margin:18px 0}
+    .tl-item::before{content:""; position:absolute; left:-11px; top:.4rem; width:10px; height:10px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-radius:9999px}
+    .theme-toggle{border:1px solid var(--border); background:transparent; border-radius:999px; padding:.45rem .6rem; cursor:pointer}
+    @media (max-width:900px){ .hero-inner{grid-template-columns:1fr} .grid-3{grid-template-columns:1fr} .grid-2{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav">
+      <div class="brand"><span class="brand-dot"></span> Umesh</div>
+      <nav class="stack">
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#highlights">Highlights</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact">Contact</a>
+        <button id="themeBtn" class="theme-toggle" title="Toggle theme">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <span class="pill">Loading...</span>
+          <h1>Hi, I'm <span style="background:linear-gradient(135deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">Loading...</span>.</h1>
+          <p class="kicker">Loading...</p>
+          <div class="stack">
+            <a class="btn" href="#projects">View Projects</a>
+            <a class="btn ghost" href="#contact">Contact</a>
+          </div>
+        </div>
+        <div class="card">
+          <strong>Quick facts</strong>
+          <ul class="muted">
+            <li>Loading...</li>
+          </ul>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+            <span class="tag">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <h2>Projects</h2>
+      <div class="grid grid-3">
+        <article class="card project">
+          <h3>Loading...</h3>
+          <p class="muted">Loading...</p>
+          <p><span class="tag">Loading...</span></p>
+          <a class="btn ghost" href="#">Loading...</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills">
+      <h2>Skills</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Loading...</h3>
+          <p class="muted">Loading...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights -->
+    <section id="highlights">
+      <h2>Highlights</h2>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Loading...</h3>
+          <ul class="muted">
+            <li>Loading...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+      <h2>Experience</h2>
+      <div class="timeline">
+        <div class="tl-item">
+          <h3>Loading...</h3>
+          <p class="muted">Loading...</p>
+          <p class="muted">Loading...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="card">
+        <p>Loading...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> Umesh Gaikwad · Built with plain HTML + CSS. Fast, accessible, and free to host.</div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <script src="data-loader.js"></script>
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Theme
+    const themeBtn = document.getElementById('themeBtn');
+    const saved = localStorage.getItem('theme');
+    if(saved === 'light') document.body.classList.add('light');
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+    });
+    // Quick section jump with '/'
+    const map = { projects:'#projects', skills:'#skills', experience:'#experience', contact:'#contact' };
+    let buffer = '';
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === '/') { e.preventDefault(); buffer=''; return; }
+      if(e.key.length === 1) buffer += e.key.toLowerCase();
+      for(const k in map){ if(buffer.endsWith(k)) { location.hash = map[k]; buffer=''; }}
+    });
+  </script>
+</body>
+</html>

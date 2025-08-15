@@ -1,0 +1,169 @@
+# Portfolio Configuration for Umesh Gaikwad
+personal:
+  name: "Umesh Gaikwad"
+  title: "DevOps • Kubernetes • CI/CD • Cloud"
+  description: "M.Tech (CSE) @ IISc Bangalore • DevOps/Platform Engineer — currently at Observe.AI (since Sep 11, 2024). Previously Amagi Media Labs & Exadatum. I build reliable cloud infra and automate deployments. 🎹🎶"
+  quick_facts:
+    - "IISc M.Tech (CSE), 2023"
+    - "DevOps/Platform • K8s, EKS, Helm, Jenkins (GitOps)"
+    - "Pulumi IaC • GCP (DataProc/GKE) • Big Data (Spark, Kafka)"
+    - "Open to roles & collabs"
+  skills_tags:
+    - "Kubernetes"
+    - "AWS"
+    - "GCP"
+    - "Helm"
+    - "Jenkins"
+    - "Pulumi"
+    - "Spark"
+    - "Kafka"
+    - "Airflow"
+    - "Python"
+    - "Bash"
+
+contact:
+  email_primary: "umeshgaikwad@iisc.ac.in"
+  email_secondary: "gaikwadumesh123@gmail.com"
+  phone_primary: "+91 9766185211"
+  phone_secondary: "+91 9834127692"
+  skype: "8b30960228c3f38e"
+  linkedin: "#"
+  hackerrank: "#"
+
+projects:
+  - title: "GitOps Jenkins on EKS"
+    description: "Helm-based Jenkins with Job DSL sidecar syncing, ScriptApproval auto-approver, ALB ingress, Okta SSO."
+    tags: ["Helm", "EKS", "ALB", "Job DSL"]
+    link: "#"
+    link_text: "Repo →"
+  
+  - title: "Liquibase CI/CD PoC"
+    description: "PR validation (syntax & format), CODEOWNERS enforcement, Bitbucket pipelines to apply DB changes safely."
+    tags: ["Liquibase", "Bitbucket", "Postgres"]
+    link: "#"
+    link_text: "Case Study →"
+  
+  - title: "Containerd Deep Dive Notes"
+    description: "Namespaces, snapshotters, CNI/CSI interactions, and troubleshooting playbook for EKS."
+    tags: ["containerd", "CNI", "K8s"]
+    link: "#"
+    link_text: "Read →"
+  
+  - title: "Food Delivery (PODS)"
+    description: "Deployed and connected multiple microservices using Docker & Kubernetes. Course project under Prof. K. V. Raghavan."
+    tags: ["Docker", "Kubernetes"]
+    link: "#"
+    link_text: "Summary →"
+  
+  - title: "Data Quality & Analysis (SSDS)"
+    description: "RDD-based transformations in PySpark for data quality checks and fundamental analysis. Under Prof. Yogesh Simmhan."
+    tags: ["PySpark", "Spark"]
+    link: "#"
+    link_text: "Notebook →"
+  
+  - title: "Skyline Points & Closest Pair (SSDS)"
+    description: "Distributed implementations on Spark + HDFS for skyline point set and closest pair problems."
+    tags: ["Spark", "HDFS"]
+    link: "#"
+    link_text: "Report →"
+
+skills:
+  - category: "Cloud Platforms"
+    description: "AWS: EKS, EC2, ALB, S3, IAM, SQS, Batch, EBS, EFS; Bottlerocket OS · GCP"
+  
+  - category: "Container Orchestration"
+    description: "Kubernetes (Karpenter, Ingress, pod scheduling, health checks)"
+  
+  - category: "Automation & CI/CD"
+    description: "Jenkins, GitOps, Liquibase, Bytebase, Harness, CloudFormation, custom CLI scripts"
+  
+  - category: "Monitoring & Observability"
+    description: "New Relic (NRQL), Kubecost, Loggly, custom alerting solutions"
+  
+  - category: "Scripting & Programming"
+    description: "Python, Bash, AWS SDK (boto3)"
+  
+  - category: "Cost & Reliability"
+    description: "Reserved instances, EBS snapshot replication, image prefetching, ingress health checks (gRPC)"
+  
+  - category: "Collaboration"
+    description: "Jira documentation, cross‑team onboarding · SME for Kafka & SQS"
+  
+  - category: "Courses & Certs"
+    items:
+      - "Google Kubernetes Engine"
+      - "Google Cloud Platform (GCP)"
+      - "Parallel Computing in Python (ongoing)"
+
+highlights:
+  - title: "🚀 Kubernetes & AWS Optimization"
+    items:
+      - "Designed custom AMIs with preloaded Docker images to reduce pod startup times."
+      - "Experimented with Bottlerocket OS & EBS snapshot‑based image prefetching."
+      - "Automated Kubecost deployment across environments for real‑time cost tracking."
+  
+  - title: "🛠 Infrastructure Automation"
+    items:
+      - "Jenkins pipelines for Git‑based infra changes."
+      - "EBS snapshot creation & multi‑account replication."
+      - "AWS Batch orchestration for role creation & cleanup."
+      - "Automated Hevo data‑pipeline resource creation via CLI."
+  
+  - title: "📊 Monitoring & Observability"
+    items:
+      - "Custom NRQL dashboards & alerts for proactive monitoring."
+      - "Scripts to track pod lifecycle events and persist logs."
+      - "ALB log analysis tools to extract IPs hitting target groups."
+  
+  - title: "🔐 Security & Reliability"
+    items:
+      - "Onboarded services (Saarthi, QuestAI, PCI workloads) to Secure Device Manager (SDM)."
+      - "Migrated container images from Docker Hub to AWS ECR to avoid pull limits."
+      - "Configured ingress health checks for gRPC services."
+  
+  - title: "🤝 Cross‑Team Contributions"
+    items:
+      - "SME for Kafka & SQS — guidance, tooling, and process improvements."
+      - "Assisted with Karpenter & CoreDNS alert setup and scaling optimizations."
+      - "Partnered with teams to debug pod scheduling & optimize resource allocation."
+
+experience:
+  - company: "Observe.AI"
+    role: "DevOps/Platform"
+    period: "Sep 11, 2024 – Present"
+    location: "Bengaluru"
+    description: "Cloud infrastructure & CI/CD for conversational AI products (high-level summary)."
+  
+  - company: "Amagi Media Labs"
+    role: "DevOps Engineer"
+    period: "Aug 2023 – Sep 2024"
+    location: "Bengaluru"
+    items:
+      - "Implemented GitOps-based deployments across multiple environments."
+      - "Built CI/CD with automated testing & container security scanning."
+      - "Managed infra updates, node transitions & efficient node management."
+      - "Cost optimization via resource tagging & DB migration strategies."
+      - "Improved routing via Load Balancer Controller & Ingress configs."
+      - "Built Slack-bot for self-serve deploys & deployment automation."
+      - "Monitoring & alerting for PRs, deployments, and costs."
+      - "Infra as Code with Pulumi for provisioning/management."
+  
+  - company: "Indian Institute of Science"
+    role: "Teaching Assistant"
+    period: "Aug 2022 – Dec 2022"
+    location: "E0 225, Design & Analysis of Algorithms · 80+ students"
+    description: "Tutorials & evaluation."
+    additional_period: "Jan 2023 – Apr 2023"
+    additional_location: "E0 208, Computational Geometry) · 60+ students"
+    additional_description: "Evaluation & invigilation."
+  
+  - company: "Exadatum"
+    role: "Big Data Engineer"
+    period: "Jul 2019 – Apr 2020"
+    location: "Pune"
+    items:
+      - "POC: Submit Spark jobs to Google Dataproc via Apache Livy REST; init scripts for REST submission."
+      - "GKE deploy scripting with logs to GCS; access control to GCP resources per user."
+      - "JupyterHub POC for multi-user notebooks; REST client for user lifecycle."
+      - "Built multi-node Hadoop cluster on Docker (Hadoop, Spark, Hive, Livy) for feature testing."
+      - "Data ingestion from TradeDesk → Kafka/GCS; refactored multiple Java projects into one."
