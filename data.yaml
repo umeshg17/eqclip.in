@@ -2,17 +2,17 @@
 personal:
   name: "Umesh Gaikwad"
   title: "DevOps • Kubernetes • CI/CD • Cloud"
-  description: "M.Tech (CSE) @ IISc Bangalore • DevOps/Platform Engineer — currently at Observe.AI (since Sep 11, 2024). Previously Amagi Media Labs & Exadatum. I build reliable cloud infra and automate deployments. 🎹🎶"
+  description: "M.Tech (CSE) @ IISc Bangalore • DevOps/Platform Engineer — currently at Observe.AI (since Sep 11, 2024). Previously Amagi Media Labs & Exadatum. I build reliable cloud infra and automate deployments."
   quick_facts:
     - "IISc M.Tech (CSE), 2023"
     - "DevOps/Platform • K8s, EKS, Helm, Jenkins (GitOps)"
     - "Pulumi IaC • GCP (DataProc/GKE) • Big Data (Spark, Kafka)"
-    - "Open to roles & collabs"
+    - "Open to roles"
   skills_tags:
     - "Kubernetes"
     - "AWS"
     - "GCP"
-    - "Helm"
+    - "Helm"`
     - "Jenkins"
     - "Pulumi"
     - "Spark"

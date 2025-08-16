@@ -237,7 +237,7 @@ class PortfolioDataLoader {
     }
 
     contactContainer.innerHTML = `
-      <p>Let's connect for <strong>DevOps/SRE/Platform</strong> roles or music collabs.</p>
+              <p>Let's connect for <strong>DevOps/SRE/Platform</strong> roles.</p>
       <p>🔗 <a href="${contact.linkedin || '#'}">LinkedIn</a> · 💻 <a href="${contact.hackerrank || '#'}">HackerRank</a></p>
       <p>✉️ <a href="mailto:${contact.email_primary || ''}">${contact.email_primary || 'No email'}</a> · 📧 <a href="mailto:${contact.email_secondary || ''}">${contact.email_secondary || 'No email'}</a></p>
       <p>📞 <a href="tel:${contact.phone_primary || ''}">${contact.phone_primary || 'No phone'}</a> · Alt: <a href="tel:${contact.phone_secondary || ''}">${contact.phone_secondary || 'No phone'}</a> · Skype: ${contact.skype || 'No Skype'}</p>
