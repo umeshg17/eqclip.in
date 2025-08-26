@@ -69,6 +69,9 @@ class PortfolioDataLoader {
     
     // Populate contact
     this.populateContact();
+    
+    // Populate footer
+    this.populateFooter();
   }
 
   populatePersonalInfo() {
@@ -89,13 +92,28 @@ class PortfolioDataLoader {
     // Update name in h1
     const h1 = document.querySelector('h1');
     if (h1 && personal.name) {
-      h1.innerHTML = `Hi, I'm <span style="background:linear-gradient(135deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">${personal.name}</span>.`;
+      h1.innerHTML = `Hi, I'm <span style="background:linear-gradient(135deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">${personal.name}</span>`;
     }
     
     // Update description
     const kickerElement = document.querySelector('.kicker');
     if (kickerElement && personal.description) {
-      kickerElement.textContent = personal.description;
+      // Convert text to links using the auto_links mapping from data.yaml
+      let descriptionWithLinks = personal.description;
+      console.log('Original description:', descriptionWithLinks);
+      console.log('Auto links data:', this.data.auto_links);
+      
+      if (this.data.auto_links) {
+        Object.entries(this.data.auto_links).forEach(([text, url]) => {
+          console.log(`Processing link: "${text}" -> "${url}"`);
+          const regex = new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+          const before = descriptionWithLinks;
+          descriptionWithLinks = descriptionWithLinks.replace(regex, `<a href="${url}" target="_blank">${text}</a>`);
+          console.log(`Before: "${before}", After: "${descriptionWithLinks}"`);
+        });
+      }
+      console.log('Final description with links:', descriptionWithLinks);
+      kickerElement.innerHTML = descriptionWithLinks;
     }
     
     // Update quick facts
@@ -237,12 +255,31 @@ class PortfolioDataLoader {
     }
 
     contactContainer.innerHTML = `
-              <p>Let's connect for <strong>DevOps/SRE/Platform</strong> roles.</p>
+              <p>Let's connect on <strong>Platform Engineering and Infrastructure Reliability</strong>.</p>
       <p>🔗 <a href="${contact.linkedin || '#'}">LinkedIn</a> · 💻 <a href="${contact.hackerrank || '#'}">HackerRank</a></p>
-      <p>✉️ <a href="mailto:${contact.email_primary || ''}">${contact.email_primary || 'No email'}</a> · 📧 <a href="mailto:${contact.email_secondary || ''}">${contact.email_secondary || 'No email'}</a></p>
-      <p>📞 <a href="tel:${contact.phone_primary || ''}">${contact.phone_primary || 'No phone'}</a> · Alt: <a href="tel:${contact.phone_secondary || ''}">${contact.phone_secondary || 'No phone'}</a> · Skype: ${contact.skype || 'No Skype'}</p>
-      <p class="muted">Prefer email for first contact. Add your real profile links above.</p>
+      <p>✉️ <a href="mailto:${contact.email || ''}">${contact.email || 'No email'}</a></p>
+      <p>📞 <a href="tel:${contact.phone_primary || ''}">${contact.phone_primary || 'No phone'}</a></p>
     `;
+  }
+
+  populateFooter() {
+    const footer = this.data.footer;
+    if (!footer) {
+      console.error('No footer data found');
+      return;
+    }
+
+    console.log('Populating footer:', footer);
+
+    const footerNameElement = document.getElementById('footer-name');
+    if (footerNameElement && footer.name) {
+      footerNameElement.textContent = footer.name;
+    }
+
+    const footerMessageElement = document.getElementById('footer-message');
+    if (footerMessageElement && footer.message) {
+      footerMessageElement.textContent = footer.message;
+    }
   }
 }
 

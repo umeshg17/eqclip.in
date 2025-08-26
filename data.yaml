@@ -1,34 +1,47 @@
 # Portfolio Configuration for Umesh Gaikwad
 personal:
   name: "Umesh Gaikwad"
-  title: "DevOps • Kubernetes • CI/CD • Cloud"
-  description: "M.Tech (CSE) @ IISc Bangalore • DevOps/Platform Engineer — currently at Observe.AI (since Sep 11, 2024). Previously Amagi Media Labs & Exadatum. I build reliable cloud infra and automate deployments."
+  title: "🏗️ Infrastructure • ☸️ Kubernetes • 🚀 DevOps • ☁️ Cloud"
+  description: "M.Tech (CSE) from IISc Bangalore with experience at Observe.AI, Amagi, and Exadatum. I build reliable, cost-efficient cloud infrastructure with Kubernetes and GitOps, bringing a collaborative yet independent approach to solving platform challenges."
   quick_facts:
-    - "IISc M.Tech (CSE), 2023"
-    - "DevOps/Platform • K8s, EKS, Helm, Jenkins (GitOps)"
-    - "Pulumi IaC • GCP (DataProc/GKE) • Big Data (Spark, Kafka)"
-    - "Open to roles"
+    - "M.Tech (CSE), IISc Bangalore — 2023"
+    - "DevOps/Platform Engineer (K8s, Helm, Jenkins, ArgoCD)"
+    - "Hands-on Cloud: AWS (EKS, storage, compute, security), GCP (DataProc/GKE)"
+    - "Big Data & IaC: Spark, Kafka, Pulumi"
+    - "Focus Areas: GitOps, cost efficiency, incident response, reliability"
+    - "Languages & Tools: Python, Bash, CI/CD pipelines"
+    - "Open to Roles: Infra, Platform, and Cloud Engineering"
   skills_tags:
     - "Kubernetes"
     - "AWS"
     - "GCP"
     - "Helm"
     - "Jenkins"
+    - "ArgoCD"
     - "Pulumi"
     - "Spark"
     - "Kafka"
-    - "Airflow"
     - "Python"
     - "Bash"
+    - "CI/CD"
+    - "GitOps"
+    - "Infra"
+    - "Cloud"
+
+auto_links:
+  "Observe.AI": "https://observe.ai"
+  "Amagi": "https://amagi.com"
+  "Exadatum": "https://exadatum.com"
 
 contact:
-  email_primary: "umeshgaikwad@iisc.ac.in"
-  email_secondary: "gaikwadumesh123@gmail.com"
+  email: "gaikwadumesh123@gmail.com"
   phone_primary: "+91 9766185211"
-  phone_secondary: "+91 9834127692"
-  skype: "8b30960228c3f38e"
-  linkedin: "#"
-  hackerrank: "#"
+  linkedin: "https://www.linkedin.com/in/umeshg17/"
+  hackerrank: "https://www.hackerrank.com/profile/umeshg17"
+
+footer:
+  name: "Umesh Gaikwad"
+  message: "Built simple, reliable, and efficient (just like good infrastructure)"
 
 projects:
   - title: "GitOps Jenkins on EKS"
