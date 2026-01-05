@@ -313,6 +313,13 @@ class PortfolioDataLoader {
       return;
     }
 
+    // Get computed CSS variable values for theme-aware colors
+    const getComputedStyle = window.getComputedStyle(document.body);
+    const textColor = getComputedStyle.getPropertyValue('--text').trim();
+    const mutedColor = getComputedStyle.getPropertyValue('--muted').trim();
+    const cardColor = getComputedStyle.getPropertyValue('--card').trim();
+    const borderColor = getComputedStyle.getPropertyValue('--border').trim();
+
     // Group data by date and pick the lowest (best) rank for each day
     const rankByDate = {};
     data.forEach(entry => {
@@ -357,7 +364,7 @@ class PortfolioDataLoader {
             display: true,
             position: 'top',
             labels: {
-              color: 'var(--text)',
+              color: textColor,
               font: {
                 size: 14
               }
@@ -366,10 +373,10 @@ class PortfolioDataLoader {
           tooltip: {
             mode: 'index',
             intersect: false,
-            backgroundColor: 'var(--card)',
-            titleColor: 'var(--text)',
-            bodyColor: 'var(--text)',
-            borderColor: 'var(--border)',
+            backgroundColor: cardColor,
+            titleColor: textColor,
+            bodyColor: textColor,
+            borderColor: borderColor,
             borderWidth: 1,
             padding: 12,
             callbacks: {
@@ -382,24 +389,36 @@ class PortfolioDataLoader {
         scales: {
           x: {
             ticks: {
-              color: 'var(--muted)',
+              color: mutedColor,
               maxRotation: 45,
-              minRotation: 45
+              minRotation: 45,
+              autoSkip: true,
+              autoSkipPadding: 10,
+              maxTicksLimit: 10,
+              callback: function(value, index) {
+                const date = dates[index];
+                if (!date) return '';
+                // Format date as "MMM DD" (e.g., "Jan 15")
+                const dateObj = new Date(date);
+                const month = dateObj.toLocaleDateString('en-US', { month: 'short' });
+                const day = dateObj.getDate();
+                return `${month} ${day}`;
+              }
             },
             grid: {
-              color: 'var(--border)'
+              color: borderColor
             }
           },
           y: {
             reverse: isInverted,
             ticks: {
-              color: 'var(--muted)',
+              color: mutedColor,
               callback: function(value) {
                 return value.toLocaleString();
               }
             },
             grid: {
-              color: 'var(--border)'
+              color: borderColor
             }
           }
         },
