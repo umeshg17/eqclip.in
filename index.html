@@ -70,6 +70,7 @@
         <a href="#skills">Skills</a>
         <a href="#highlights">Highlights</a>
         <a href="#experience">Experience</a>
+        <a href="#leetcode">LeetCode</a>
         <a href="#contact">Contact</a>
         <button id="themeBtn" class="theme-toggle" title="Toggle theme">🌓</button>
       </nav>
@@ -150,6 +151,25 @@
       </div>
     </section>
 
+    <!-- LeetCode Rank -->
+    <section id="leetcode">
+      <h2>LeetCode Progress</h2>
+      <div class="card">
+        <div style="margin-bottom: 1rem;">
+          <p class="muted">Tracking my LeetCode ranking over time. Updated daily.</p>
+          <p class="muted">Profile: <a href="https://leetcode.com/u/umeshg17/" target="_blank">@umeshg17</a></p>
+        </div>
+        <div style="position: relative; height: 400px;">
+          <canvas id="leetcodeChart"></canvas>
+        </div>
+        <div id="leetcodeStats" style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+          <div class="muted">Current Rank: <strong id="currentRank">-</strong></div>
+          <div class="muted">Best Rank: <strong id="bestRank">-</strong></div>
+          <div class="muted">Days Tracked: <strong id="daysTracked">-</strong></div>
+        </div>
+      </div>
+    </section>
+
     <!-- Contact -->
     <section id="contact">
       <h2>Contact</h2>
@@ -164,6 +184,7 @@
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="data-loader.js"></script>
   <script>
     // Year
@@ -177,7 +198,7 @@
       localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
     });
     // Quick section jump with '/'
-    const map = { projects:'#projects', skills:'#skills', experience:'#experience', contact:'#contact' };
+    const map = { projects:'#projects', skills:'#skills', experience:'#experience', leetcode:'#leetcode', contact:'#contact' };
     let buffer = '';
     window.addEventListener('keydown', (e)=>{
       if(e.key === '/') { e.preventDefault(); buffer=''; return; }

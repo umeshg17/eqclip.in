@@ -141,6 +141,53 @@ The JavaScript handles:
 - Keyboard shortcuts
 - Dynamic content population
 
+## LeetCode Rank Tracking
+
+The portfolio includes automatic daily tracking of LeetCode ranking.
+
+### How It Works
+
+1. **Daily Monitoring**: A GitHub Actions workflow runs daily to fetch your LeetCode rank
+2. **Data Storage**: Rank data is stored in `leetcode-rank-data.json`
+3. **Visualization**: The rank is displayed as an interactive chart on the portfolio page
+
+### Manual Testing
+
+To test the rank fetching script locally:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the script
+python3 fetch-leetcode-rank.py
+```
+
+The script will:
+- Fetch your current LeetCode rank
+- Save it to `leetcode-rank-data.json`
+- Update existing entries for the same day or add new entries
+
+### GitHub Actions Setup
+
+The workflow (`.github/workflows/fetch-leetcode-rank.yml`) is configured to:
+- Run daily at 00:00 UTC
+- Fetch the latest rank
+- Commit and push the updated data file
+
+**Note**: Make sure GitHub Actions has write permissions to your repository:
+1. Go to Settings → Actions → General
+2. Under "Workflow permissions", select "Read and write permissions"
+3. Check "Allow GitHub Actions to create and approve pull requests"
+
+### Troubleshooting
+
+If the rank fetching fails:
+- Check if the LeetCode profile is public
+- Verify the username in `fetch-leetcode-rank.py` matches your profile
+- Check GitHub Actions logs for error messages
+- LeetCode may have rate limits or API changes
+
 ## License
 
 This portfolio template is free to use and modify for personal and commercial projects.

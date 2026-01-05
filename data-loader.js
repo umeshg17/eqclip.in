@@ -72,6 +72,9 @@ class PortfolioDataLoader {
     
     // Populate footer
     this.populateFooter();
+    
+    // Load LeetCode rank chart
+    this.loadLeetCodeChart();
   }
 
   populatePersonalInfo() {
@@ -279,6 +282,167 @@ class PortfolioDataLoader {
     const footerMessageElement = document.getElementById('footer-message');
     if (footerMessageElement && footer.message) {
       footerMessageElement.textContent = footer.message;
+    }
+  }
+
+  async loadLeetCodeChart() {
+    try {
+      const response = await fetch('leetcode-rank-data.json');
+      if (!response.ok) {
+        console.warn('LeetCode rank data not available');
+        return;
+      }
+      
+      const rankData = await response.json();
+      if (!rankData.data || rankData.data.length === 0) {
+        console.warn('No LeetCode rank data available');
+        return;
+      }
+
+      this.renderLeetCodeChart(rankData.data);
+      this.updateLeetCodeStats(rankData.data);
+    } catch (error) {
+      console.error('Error loading LeetCode rank data:', error);
+    }
+  }
+
+  renderLeetCodeChart(data) {
+    const ctx = document.getElementById('leetcodeChart');
+    if (!ctx) {
+      console.error('Chart canvas not found');
+      return;
+    }
+
+    // Group data by date and pick the lowest (best) rank for each day
+    const rankByDate = {};
+    data.forEach(entry => {
+      const date = entry.date;
+      if (!rankByDate[date] || entry.rank < rankByDate[date]) {
+        rankByDate[date] = entry.rank;
+      }
+    });
+
+    // Convert to arrays sorted by date
+    const sortedDates = Object.keys(rankByDate).sort((a, b) => new Date(a) - new Date(b));
+    const dates = sortedDates;
+    const ranks = sortedDates.map(date => rankByDate[date]);
+
+    // Determine if we should use inverted Y-axis (lower rank is better)
+    const isInverted = ranks.length > 0 && ranks[0] > 1000;
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [{
+          label: 'LeetCode Rank',
+          data: ranks,
+          borderColor: 'rgb(14, 165, 233)',
+          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: 'rgb(14, 165, 233)',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              color: 'var(--text)',
+              font: {
+                size: 14
+              }
+            }
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'var(--card)',
+            titleColor: 'var(--text)',
+            bodyColor: 'var(--text)',
+            borderColor: 'var(--border)',
+            borderWidth: 1,
+            padding: 12,
+            callbacks: {
+              label: function(context) {
+                return `Rank: ${context.parsed.y.toLocaleString()}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: 'var(--muted)',
+              maxRotation: 45,
+              minRotation: 45
+            },
+            grid: {
+              color: 'var(--border)'
+            }
+          },
+          y: {
+            reverse: isInverted,
+            ticks: {
+              color: 'var(--muted)',
+              callback: function(value) {
+                return value.toLocaleString();
+              }
+            },
+            grid: {
+              color: 'var(--border)'
+            }
+          }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        }
+      }
+    });
+  }
+
+  updateLeetCodeStats(data) {
+    if (!data || data.length === 0) return;
+
+    // Group data by date and pick the lowest (best) rank for each day
+    const rankByDate = {};
+    data.forEach(entry => {
+      const date = entry.date;
+      if (!rankByDate[date] || entry.rank < rankByDate[date]) {
+        rankByDate[date] = entry.rank;
+      }
+    });
+
+    // Get unique dates sorted
+    const sortedDates = Object.keys(rankByDate).sort((a, b) => new Date(a) - new Date(b));
+    const currentRank = rankByDate[sortedDates[sortedDates.length - 1]];
+    const bestRank = Math.min(...Object.values(rankByDate));
+    const daysTracked = sortedDates.length;
+
+    const currentRankEl = document.getElementById('currentRank');
+    if (currentRankEl) {
+      currentRankEl.textContent = currentRank.toLocaleString();
+    }
+
+    const bestRankEl = document.getElementById('bestRank');
+    if (bestRankEl) {
+      bestRankEl.textContent = bestRank.toLocaleString();
+    }
+
+    const daysTrackedEl = document.getElementById('daysTracked');
+    if (daysTrackedEl) {
+      daysTrackedEl.textContent = daysTracked;
     }
   }
 }
