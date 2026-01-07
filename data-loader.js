@@ -287,7 +287,8 @@ class PortfolioDataLoader {
 
   async loadLeetCodeChart() {
     try {
-      const response = await fetch('leetcode-rank-data.json');
+      // Avoid CDN/browser caching so we always read the latest file
+      const response = await fetch(`leetcode-rank-data.json?ts=${Date.now()}`, { cache: 'no-store' });
       if (!response.ok) {
         console.warn('LeetCode rank data not available');
         return;
@@ -438,14 +439,23 @@ class PortfolioDataLoader {
     const rankByDate = {};
     data.forEach(entry => {
       const date = entry.date;
-      if (!rankByDate[date] || entry.rank < rankByDate[date]) {
-        rankByDate[date] = entry.rank;
+      const rankNum = Number(entry.rank);
+      if (!rankByDate[date] || rankNum < rankByDate[date]) {
+        rankByDate[date] = rankNum;
       }
     });
 
     // Get unique dates sorted
     const sortedDates = Object.keys(rankByDate).sort((a, b) => new Date(a) - new Date(b));
-    const currentRank = rankByDate[sortedDates[sortedDates.length - 1]];
+    const latestDate = sortedDates[sortedDates.length - 1];
+
+    // For the latest date, ensure we pick the minimum across all entries of that date
+    const currentDayRanks = data
+      .filter(d => d.date === latestDate)
+      .map(d => Number(d.rank))
+      .filter(n => Number.isFinite(n));
+    const currentRank = currentDayRanks.length ? Math.min(...currentDayRanks) : rankByDate[latestDate];
+
     const bestRank = Math.min(...Object.values(rankByDate));
     const daysTracked = sortedDates.length;
 
