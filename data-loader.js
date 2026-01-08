@@ -73,8 +73,16 @@ class PortfolioDataLoader {
     // Populate footer
     this.populateFooter();
     
-    // Load LeetCode rank chart
+    // Load LeetCode rank chart (this will handle scrolling after chart loads)
     this.loadLeetCodeChart();
+    
+    // Fallback: Ensure we scroll to hash after all content is populated
+    // This handles cases where chart loads quickly or if there are other async operations
+    if (window.location.hash) {
+      setTimeout(() => {
+        this.scrollToHashIfNeeded();
+      }, 500);
+    }
   }
 
   populatePersonalInfo() {
@@ -291,19 +299,44 @@ class PortfolioDataLoader {
       const response = await fetch(`leetcode-rank-data.json?ts=${Date.now()}`, { cache: 'no-store' });
       if (!response.ok) {
         console.warn('LeetCode rank data not available');
+        this.scrollToHashIfNeeded();
         return;
       }
       
       const rankData = await response.json();
       if (!rankData.data || rankData.data.length === 0) {
         console.warn('No LeetCode rank data available');
+        this.scrollToHashIfNeeded();
         return;
       }
 
       this.renderLeetCodeChart(rankData.data);
       this.updateLeetCodeStats(rankData.data);
+      
+      // Scroll to hash after chart is rendered (chart rendering might change page height)
+      this.scrollToHashIfNeeded();
     } catch (error) {
       console.error('Error loading LeetCode rank data:', error);
+      this.scrollToHashIfNeeded();
+    }
+  }
+
+  scrollToHashIfNeeded() {
+    const hash = window.location.hash;
+    if (hash) {
+      // Wait a bit to ensure content is fully rendered (especially chart for leetcode)
+      setTimeout(() => {
+        const target = document.querySelector(hash);
+        if (target) {
+          const headerOffset = 80;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, hash === '#leetcode' ? 300 : 100);
     }
   }
 

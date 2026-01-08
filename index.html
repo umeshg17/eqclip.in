@@ -46,7 +46,7 @@
     .kicker{color:var(--muted); margin-bottom:1.25rem}
     .stack{display:flex; gap:12px; flex-wrap:wrap}
     .card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 8px 32px var(--shadow)}
-    section{padding:48px 0}
+    section{padding:48px 0; scroll-margin-top:80px}
     .grid{display:grid; gap:18px}
     .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
     .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -200,6 +200,58 @@
       document.body.classList.toggle('light');
       localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
     });
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href === '#' || href === '#') return;
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          // Update URL hash first
+          window.location.hash = href;
+          // Then scroll smoothly
+          const headerOffset = 80;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Function to scroll to hash after content is loaded
+    function scrollToHash() {
+      const hash = window.location.hash;
+      if (hash) {
+        const target = document.querySelector(hash);
+        if (target) {
+          // Wait a bit to ensure all content is rendered
+          setTimeout(() => {
+            const headerOffset = 80;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }, 100);
+        }
+      }
+    }
+
+    // Handle hash change events
+    window.addEventListener('hashchange', () => {
+      scrollToHash();
+    });
+
+    // Scroll to hash on page load (will be called after content loads)
+    window.addEventListener('load', () => {
+      scrollToHash();
+    });
+
     // Quick section jump with '/'
     const map = { projects:'#projects', skills:'#skills', experience:'#experience', leetcode:'#leetcode', contact:'#contact' };
     let buffer = '';
