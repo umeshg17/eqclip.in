@@ -47,93 +47,56 @@ class GoogleDriveUploader {
         throw new Error('Google Identity Services library not loaded');
       }
       
-      // Track if we're doing a silent token request
-      let isSilentRequest = true;
-      
       this.tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: clientId,
         scope: this.SCOPES,
         callback: async (response) => {
           if (response.error) {
-            // If user interaction required and this was a silent request, that's OK
-            if (isSilentRequest && (response.error.includes('interaction_required') || response.error === 'popup_blocked')) {
-              console.log('Silent token request failed - user needs to sign in');
-              isSilentRequest = false;
-              return; // Don't show error for silent failures
-            }
-            // If user interaction required, show auth button
+            // If user interaction required
             if (response.error === 'popup_closed_by_user' || response.error === 'access_denied') {
               console.log('User cancelled authentication');
               return;
             }
             // For other errors during explicit auth
-            if (!isSilentRequest && response.error !== 'popup_blocked') {
+            if (response.error !== 'popup_blocked') {
               console.error('Authentication error:', response.error);
               this.showError('Authentication failed. Please try again.');
             }
-            isSilentRequest = false;
             return;
           }
           // Success - token received
           this.gapi.client.setToken(response);
-          isSilentRequest = false;
           await this.onAuthSuccess();
         },
       });
       
-      // Try to get token silently first (if user has already authorized)
-      // This will call the callback with either success or an error requiring interaction
-      try {
-        this.tokenClient.requestAccessToken({ prompt: '' });
-        
-        // Check multiple times for token restoration (callback might be delayed)
-        // This handles cases where the callback hasn't fired yet but token exists
-        const checkTokenRestore = async (attempt = 0) => {
-          // Check if already authenticated (callback might have already called onAuthSuccess)
-          const uploadSection = document.getElementById('uploadSection');
-          if (uploadSection && uploadSection.style.display !== 'none') {
-            return; // Already authenticated, don't restore again
-          }
-          
-          const existingToken = this.gapi.client.getToken();
-          if (existingToken && existingToken.access_token) {
-            // Token exists, verify it's still valid
-            try {
-              const testResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-                headers: {
-                  'Authorization': `Bearer ${existingToken.access_token}`
-                }
-              });
-              
-              if (testResponse.ok) {
-                // Token is valid, restore session
-                console.log('Restored session from existing token');
-                await this.onAuthSuccess();
-                return true; // Successfully restored
-              } else {
-                // Token invalid, clear it
-                this.gapi.client.setToken('');
+      // Check for existing token silently (without calling requestAccessToken)
+      // This avoids triggering any prompts on page load
+      setTimeout(async () => {
+        const existingToken = this.gapi.client.getToken();
+        if (existingToken && existingToken.access_token) {
+          // Token exists, verify it's still valid
+          try {
+            const testResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+              headers: {
+                'Authorization': `Bearer ${existingToken.access_token}`
               }
-            } catch (error) {
-              console.log('Token validation failed:', error);
+            });
+            
+            if (testResponse.ok) {
+              // Token is valid, restore session silently
+              console.log('Restored session from existing token');
+              await this.onAuthSuccess();
+            } else {
+              // Token invalid, clear it (but don't show auth button - let user click when ready)
               this.gapi.client.setToken('');
             }
+          } catch (error) {
+            console.log('Token validation failed:', error);
+            this.gapi.client.setToken('');
           }
-          
-          // If not restored yet and we haven't exceeded max attempts, check again
-          if (attempt < 3) {
-            const delay = [500, 1000, 2000][attempt]; // Check at 500ms, 1.5s, 3.5s
-            setTimeout(() => checkTokenRestore(attempt + 1), delay);
-          }
-          return false;
-        };
-        
-        // Start checking after initial delay
-        setTimeout(() => checkTokenRestore(0), 500);
-      } catch (error) {
-        console.log('Silent token request error:', error);
-        isSilentRequest = false;
-      }
+        }
+      }, 500);
     } catch (error) {
       console.error('Error initializing Google API:', error);
       // Only show error if DOM is ready
