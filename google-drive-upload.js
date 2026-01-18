@@ -554,7 +554,19 @@ class GoogleDriveUploader {
         timeStyle: 'short'
       });
       
-      const deviceInfo = this.deviceInfo || {};
+      // Get device info or parse fresh if not collected
+      let deviceInfo = this.deviceInfo;
+      if (!deviceInfo) {
+        // Fallback: parse user agent directly if deviceInfo not collected yet
+        const browserInfo = this.parseUserAgent(navigator.userAgent);
+        deviceInfo = {
+          browser: browserInfo.browser,
+          browserVersion: browserInfo.version,
+          os: browserInfo.os,
+          deviceType: browserInfo.deviceType,
+          platform: navigator.platform || 'Unknown'
+        };
+      }
       
       // Format: "Uploaded by: Name (email@example.com) on Date Time"
       // Or if name is same as email: "Uploaded by: email@example.com on Date Time"
@@ -565,20 +577,31 @@ class GoogleDriveUploader {
         uploaderInfo = `Uploaded by: ${this.userEmail || 'Unknown'} on ${uploadDate}`;
       }
       
-      // Add device and network information
+      // Add device and network information (always include browser/OS if detected)
       const deviceParts = [];
+      
+      // Browser (should always be detectable)
       if (deviceInfo.browser && deviceInfo.browser !== 'Unknown') {
-        deviceParts.push(`Browser: ${deviceInfo.browser}${deviceInfo.browserVersion && deviceInfo.browserVersion !== 'Unknown' ? ' ' + deviceInfo.browserVersion : ''}`);
+        const browserStr = deviceInfo.browser + (deviceInfo.browserVersion && deviceInfo.browserVersion !== 'Unknown' ? ' ' + deviceInfo.browserVersion : '');
+        deviceParts.push(`Browser: ${browserStr}`);
       }
+      
+      // OS (should always be detectable)
       if (deviceInfo.os && deviceInfo.os !== 'Unknown') {
         deviceParts.push(`OS: ${deviceInfo.os}`);
       }
+      
+      // Device type
       if (deviceInfo.deviceType && deviceInfo.deviceType !== 'Unknown') {
         deviceParts.push(`Device: ${deviceInfo.deviceType}`);
       }
+      
+      // Platform
       if (deviceInfo.platform && deviceInfo.platform !== 'Unknown') {
         deviceParts.push(`Platform: ${deviceInfo.platform}`);
       }
+      
+      // IP and location (may not be available immediately)
       if (deviceInfo.ipAddress && deviceInfo.ipAddress !== 'Unknown') {
         deviceParts.push(`IP: ${deviceInfo.ipAddress}`);
       }
@@ -589,6 +612,7 @@ class GoogleDriveUploader {
       const deviceDetails = deviceParts.length > 0 ? deviceParts.join(' | ') : null;
       metadata.description = uploaderInfo + (deviceDetails ? `\n\n${deviceDetails}` : '');
       
+      console.log('Device info used:', deviceInfo);
       console.log('File description:', metadata.description);
       
       // Add comprehensive audit trail as custom properties
