@@ -525,11 +525,15 @@ class GoogleDriveUploader {
 
   async uploadAllFiles() {
     const pendingFiles = this.files.filter(f => f.status === 'pending');
+    console.log(`Starting upload of ${pendingFiles.length} pending files`);
     if (pendingFiles.length === 0) return;
 
     for (const item of pendingFiles) {
+      console.log(`Uploading file: ${item.file.name}`);
       await this.uploadFile(item);
+      console.log(`Completed upload of: ${item.file.name}, status: ${item.status}`);
     }
+    console.log(`Finished uploading all ${pendingFiles.length} files`);
   }
 
   async uploadFile(item) {
