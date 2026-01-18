@@ -1,0 +1,35 @@
+// Google Drive API Configuration Template
+// 
+// IMPORTANT: Copy this file to google-drive-config.js and fill in your credentials
+// DO NOT commit google-drive-config.js to the repository
+// 
+// Setup Instructions:
+// 1. Go to https://console.cloud.google.com/
+// 2. Create a new project or select an existing one
+// 3. Enable the Google Drive API:
+//    - Go to "APIs & Services" > "Library"
+//    - Search for "Google Drive API"
+//    - Click "Enable"
+// 4. Create OAuth 2.0 credentials:
+//    - Go to "APIs & Services" > "Credentials"
+//    - Click "Create Credentials" > "OAuth client ID"
+//    - Select "Web application"
+//    - Add your website URL to "Authorized JavaScript origins"
+//      (e.g., http://localhost:8000 for local, https://yourdomain.com for production)
+//    - Add your website URL + callback path to "Authorized redirect URIs"
+//    - Copy the "Client ID"
+// 5. Create an API Key:
+//    - Still in "Credentials"
+//    - Click "Create Credentials" > "API key"
+//    - (Optional) Restrict the API key to Google Drive API for security
+//    - Copy the "API Key"
+// 6. Update the values below with your credentials
+
+window.GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID_HERE';
+window.GOOGLE_API_KEY = 'YOUR_API_KEY_HERE';
+
+// Optional: Set a default folder ID where files should be uploaded
+// You can find the folder ID in the Google Drive URL: 
+// https://drive.google.com/drive/folders/FOLDER_ID_HERE
+// Leave empty to upload to Drive root
+window.GOOGLE_DRIVE_DEFAULT_FOLDER_ID = '';
