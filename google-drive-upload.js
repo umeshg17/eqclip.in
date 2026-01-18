@@ -251,6 +251,35 @@ class GoogleDriveUploader {
       // Get IP address and location (using ipify.org)
       let ipAddress = 'Unknown';
       let location = 'Unknown';
+      let gpsLocation = null;
+      
+      // Try to get GPS location (requires user permission)
+      try {
+        if (navigator.geolocation) {
+          gpsLocation = await new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                resolve({
+                  latitude: position.coords.latitude.toFixed(6),
+                  longitude: position.coords.longitude.toFixed(6),
+                  accuracy: Math.round(position.coords.accuracy)
+                });
+              },
+              (error) => {
+                console.warn('Geolocation permission denied or unavailable:', error.message);
+                resolve(null);
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+              }
+            );
+          });
+        }
+      } catch (geoError) {
+        console.warn('Geolocation error:', geoError);
+      }
       
       try {
         const ipResponse = await fetch('https://api.ipify.org?format=json');
@@ -263,14 +292,33 @@ class GoogleDriveUploader {
             const locResponse = await fetch(`https://ipapi.co/${ipAddress}/json/`);
             if (locResponse.ok) {
               const locData = await locResponse.json();
-              location = `${locData.city || ''}, ${locData.region || ''}, ${locData.country_name || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'Unknown';
+              const ipLocation = `${locData.city || ''}, ${locData.region || ''}, ${locData.country_name || ''}`.replace(/^,\s*|,\s*$/g, '').trim();
+              
+              // Use GPS if available, otherwise use IP-based location
+              if (gpsLocation) {
+                location = `GPS: ${gpsLocation.latitude}, ${gpsLocation.longitude} (±${gpsLocation.accuracy}m) | ${ipLocation}`;
+              } else {
+                location = ipLocation || 'Unknown';
+              }
+            } else if (gpsLocation) {
+              // If IP location fails but GPS is available, use only GPS
+              location = `GPS: ${gpsLocation.latitude}, ${gpsLocation.longitude} (±${gpsLocation.accuracy}m)`;
             }
           } catch (locError) {
-            console.warn('Could not fetch location:', locError);
+            console.warn('Could not fetch IP-based location:', locError);
+            if (gpsLocation) {
+              location = `GPS: ${gpsLocation.latitude}, ${gpsLocation.longitude} (±${gpsLocation.accuracy}m)`;
+            }
           }
+        } else if (gpsLocation) {
+          // If IP fetch fails but GPS is available, use only GPS
+          location = `GPS: ${gpsLocation.latitude}, ${gpsLocation.longitude} (±${gpsLocation.accuracy}m)`;
         }
       } catch (ipError) {
         console.warn('Could not fetch IP address:', ipError);
+        if (gpsLocation) {
+          location = `GPS: ${gpsLocation.latitude}, ${gpsLocation.longitude} (±${gpsLocation.accuracy}m)`;
+        }
       }
       
       this.deviceInfo = {
@@ -285,6 +333,9 @@ class GoogleDriveUploader {
         language: language,
         ipAddress: ipAddress,
         location: location,
+        gpsLatitude: gpsLocation ? gpsLocation.latitude : null,
+        gpsLongitude: gpsLocation ? gpsLocation.longitude : null,
+        gpsAccuracy: gpsLocation ? gpsLocation.accuracy : null,
         platform: navigator.platform || 'Unknown'
       };
       
@@ -622,6 +673,9 @@ class GoogleDriveUploader {
         'upload_timestamp': uploadTimestamp,
         'upload_ip': deviceInfo.ipAddress || 'Unknown',
         'upload_location': deviceInfo.location || 'Unknown',
+        'upload_gps_latitude': deviceInfo.gpsLatitude || 'Unknown',
+        'upload_gps_longitude': deviceInfo.gpsLongitude || 'Unknown',
+        'upload_gps_accuracy': deviceInfo.gpsAccuracy ? `${deviceInfo.gpsAccuracy}m` : 'Unknown',
         'upload_browser': deviceInfo.browser || 'Unknown',
         'upload_browser_version': deviceInfo.browserVersion || 'Unknown',
         'upload_os': deviceInfo.os || 'Unknown',
