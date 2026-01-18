@@ -85,6 +85,40 @@ class GoogleDriveUploader {
       // This will call the callback with either success or an error requiring interaction
       try {
         this.tokenClient.requestAccessToken({ prompt: '' });
+        
+        // Also check after a short delay if token was already available (cached by browser)
+        // This handles cases where the callback hasn't fired yet but token exists
+        setTimeout(async () => {
+          // Check if already authenticated (callback might have already called onAuthSuccess)
+          const uploadSection = document.getElementById('uploadSection');
+          if (uploadSection && uploadSection.style.display !== 'none') {
+            return; // Already authenticated, don't restore again
+          }
+          
+          const existingToken = this.gapi.client.getToken();
+          if (existingToken && existingToken.access_token) {
+            // Token exists, verify it's still valid
+            try {
+              const testResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                headers: {
+                  'Authorization': `Bearer ${existingToken.access_token}`
+                }
+              });
+              
+              if (testResponse.ok) {
+                // Token is valid, restore session
+                console.log('Restored session from existing token');
+                await this.onAuthSuccess();
+              } else {
+                // Token invalid, clear it
+                this.gapi.client.setToken('');
+              }
+            } catch (error) {
+              console.log('Token validation failed:', error);
+              this.gapi.client.setToken('');
+            }
+          }
+        }, 500); // Wait 500ms for callback to potentially complete
       } catch (error) {
         console.log('Silent token request error:', error);
         isSilentRequest = false;
