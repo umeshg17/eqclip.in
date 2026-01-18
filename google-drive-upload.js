@@ -2,7 +2,9 @@
 class GoogleDriveUploader {
   constructor() {
     this.DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
-    this.SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+    // Using 'drive' scope instead of 'drive.file' to enable ownership transfer
+    // drive.file scope doesn't allow transferring file ownership to folder owner
+    this.SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email';
     this.tokenClient = null;
     this.gapi = null;
     this.files = [];
@@ -841,25 +843,62 @@ class GoogleDriveUploader {
       if (folderResponse.result.owners && folderResponse.result.owners.length > 0) {
         const folderOwnerEmail = folderResponse.result.owners[0].emailAddress;
         
-        // Transfer ownership to folder owner
-        const permissionResponse = await this.gapi.client.drive.permissions.create({
-          fileId: fileId,
-          transferOwnership: true,
-          requestBody: {
-            role: 'owner',
-            type: 'user',
-            emailAddress: folderOwnerEmail
+        // Transfer ownership: First ensure folder owner has edit access, then transfer
+        try {
+          // Step 1: Grant edit access to folder owner (if not already present)
+          const currentPermissions = await this.gapi.client.drive.permissions.list({
+            fileId: fileId,
+            fields: 'permissions(id, role, type, emailAddress)'
+          });
+          
+          let ownerPermissionId = null;
+          const existingPermission = currentPermissions.result.permissions?.find(
+            p => p.emailAddress === folderOwnerEmail
+          );
+          
+          if (!existingPermission) {
+            // Grant edit access first
+            const newPermission = await this.gapi.client.drive.permissions.create({
+              fileId: fileId,
+              requestBody: {
+                role: 'writer',
+                type: 'user',
+                emailAddress: folderOwnerEmail
+              }
+            });
+            ownerPermissionId = newPermission.result.id;
+          } else {
+            ownerPermissionId = existingPermission.id;
           }
-        });
+          
+          // Step 2: Transfer ownership using the permission ID
+          await this.gapi.client.drive.permissions.update({
+            fileId: fileId,
+            permissionId: ownerPermissionId,
+            transferOwnership: true,
+            requestBody: {
+              role: 'owner'
+            }
+          });
+          
+          console.log('File ownership transferred to:', folderOwnerEmail);
+          return;
+        } catch (transferError) {
+          console.error('Ownership transfer failed:', transferError);
+          throw transferError; // Re-throw to be caught by outer catch
+        }
         
-        console.log('File ownership transferred to:', folderOwnerEmail);
+        console.warn('Both ownership transfer methods failed. File owned by uploader.');
+        console.warn('Note: To enable ownership transfer, you may need to use drive scope instead of drive.file scope.');
       } else {
         console.warn('Could not get folder owner email for ownership transfer');
       }
     } catch (error) {
-      // Ownership transfer might fail due to permissions, but that's OK
-      // The file will still be uploaded, just owned by the uploader
-      console.warn('Could not transfer file ownership (file still uploaded):', error.message);
+      // Ownership transfer failed - this is expected with drive.file scope
+      console.warn('Could not transfer file ownership:', error.message);
+      console.warn('File is owned by uploader. To fix this:');
+      console.warn('1. Use drive scope instead of drive.file (requires more permissions)');
+      console.warn('2. Or manually transfer ownership after upload');
     }
   }
 
