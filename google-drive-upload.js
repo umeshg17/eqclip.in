@@ -9,6 +9,7 @@ class GoogleDriveUploader {
     this.folderId = null;
     this.userEmail = null;
     this.userName = null;
+    this.deviceInfo = null;
     
     this.initializeGapi();
   }
@@ -222,6 +223,122 @@ class GoogleDriveUploader {
       this.userEmail = 'Unknown';
       this.userName = 'Unknown';
     }
+    
+    // Collect device and browser information
+    await this.collectDeviceInfo();
+  }
+
+  async collectDeviceInfo() {
+    try {
+      // Parse user agent for browser and device info
+      const userAgent = navigator.userAgent;
+      const browserInfo = this.parseUserAgent(userAgent);
+      
+      // Get screen information
+      const screenInfo = {
+        width: screen.width,
+        height: screen.height,
+        colorDepth: screen.colorDepth,
+        pixelRatio: window.devicePixelRatio || 1
+      };
+      
+      // Get timezone
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
+      
+      // Get language
+      const language = navigator.language || navigator.userLanguage || 'Unknown';
+      
+      // Get IP address and location (using ipify.org)
+      let ipAddress = 'Unknown';
+      let location = 'Unknown';
+      
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        if (ipResponse.ok) {
+          const ipData = await ipResponse.json();
+          ipAddress = ipData.ip || 'Unknown';
+          
+          // Get location from IP (using ip-api.com - free tier)
+          try {
+            const locResponse = await fetch(`https://ipapi.co/${ipAddress}/json/`);
+            if (locResponse.ok) {
+              const locData = await locResponse.json();
+              location = `${locData.city || ''}, ${locData.region || ''}, ${locData.country_name || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'Unknown';
+            }
+          } catch (locError) {
+            console.warn('Could not fetch location:', locError);
+          }
+        }
+      } catch (ipError) {
+        console.warn('Could not fetch IP address:', ipError);
+      }
+      
+      this.deviceInfo = {
+        browser: browserInfo.browser,
+        browserVersion: browserInfo.version,
+        os: browserInfo.os,
+        deviceType: browserInfo.deviceType,
+        userAgent: userAgent,
+        screen: `${screenInfo.width}x${screenInfo.height}`,
+        pixelRatio: screenInfo.pixelRatio,
+        timezone: timezone,
+        language: language,
+        ipAddress: ipAddress,
+        location: location,
+        platform: navigator.platform || 'Unknown'
+      };
+      
+      console.log('Device info collected:', this.deviceInfo);
+    } catch (error) {
+      console.warn('Could not collect device info:', error);
+      this.deviceInfo = {
+        browser: 'Unknown',
+        os: 'Unknown',
+        userAgent: navigator.userAgent || 'Unknown'
+      };
+    }
+  }
+
+  parseUserAgent(userAgent) {
+    let browser = 'Unknown';
+    let version = 'Unknown';
+    let os = 'Unknown';
+    let deviceType = 'Desktop';
+    
+    // Parse browser
+    if (userAgent.includes('Firefox/')) {
+      browser = 'Firefox';
+      const match = userAgent.match(/Firefox\/(\d+)/);
+      version = match ? match[1] : 'Unknown';
+    } else if (userAgent.includes('Chrome/') && !userAgent.includes('Edg/')) {
+      browser = 'Chrome';
+      const match = userAgent.match(/Chrome\/(\d+)/);
+      version = match ? match[1] : 'Unknown';
+    } else if (userAgent.includes('Safari/') && !userAgent.includes('Chrome/')) {
+      browser = 'Safari';
+      const match = userAgent.match(/Version\/(\d+)/);
+      version = match ? match[1] : 'Unknown';
+    } else if (userAgent.includes('Edg/')) {
+      browser = 'Edge';
+      const match = userAgent.match(/Edg\/(\d+)/);
+      version = match ? match[1] : 'Unknown';
+    }
+    
+    // Parse OS
+    if (userAgent.includes('Windows')) os = 'Windows';
+    else if (userAgent.includes('Mac OS X') || userAgent.includes('Macintosh')) os = 'macOS';
+    else if (userAgent.includes('Linux')) os = 'Linux';
+    else if (userAgent.includes('Android')) os = 'Android';
+    else if (userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')) os = 'iOS';
+    
+    // Detect device type
+    if (userAgent.includes('Mobile') || userAgent.includes('Android') || userAgent.includes('iPhone')) {
+      deviceType = 'Mobile';
+    } else if (userAgent.includes('Tablet') || userAgent.includes('iPad')) {
+      deviceType = 'Tablet';
+    }
+    
+    return { browser, version, os, deviceType };
   }
 
   logout() {
@@ -430,12 +547,14 @@ class GoogleDriveUploader {
         console.log('No folder ID set, uploading to Drive root');
       }
 
-      // Add uploader information to file description for audit trail
+      // Add comprehensive uploader information to file description for audit trail
       const uploadTimestamp = new Date().toISOString();
       const uploadDate = new Date(uploadTimestamp).toLocaleString('en-US', {
         dateStyle: 'medium',
         timeStyle: 'short'
       });
+      
+      const deviceInfo = this.deviceInfo || {};
       
       // Format: "Uploaded by: Name (email@example.com) on Date Time"
       // Or if name is same as email: "Uploaded by: email@example.com on Date Time"
@@ -445,13 +564,34 @@ class GoogleDriveUploader {
       } else {
         uploaderInfo = `Uploaded by: ${this.userEmail || 'Unknown'} on ${uploadDate}`;
       }
-      metadata.description = uploaderInfo;
       
-      // Also add as custom property for easy querying
+      // Add device and network information
+      const deviceDetails = [
+        `Browser: ${deviceInfo.browser || 'Unknown'}${deviceInfo.browserVersion ? ' ' + deviceInfo.browserVersion : ''}`,
+        `OS: ${deviceInfo.os || 'Unknown'}`,
+        `Device: ${deviceInfo.deviceType || 'Unknown'}`,
+        `Platform: ${deviceInfo.platform || 'Unknown'}`,
+        `IP: ${deviceInfo.ipAddress || 'Unknown'}`,
+        `Location: ${deviceInfo.location || 'Unknown'}`
+      ].filter(line => !line.includes('Unknown')).join(' | ');
+      
+      metadata.description = uploaderInfo + (deviceDetails ? `\n\n${deviceDetails}` : '');
+      
+      // Add comprehensive audit trail as custom properties
       metadata.properties = {
         'uploader_email': this.userEmail || 'Unknown',
         'uploader_name': this.userName || 'Unknown',
-        'upload_timestamp': uploadTimestamp
+        'upload_timestamp': uploadTimestamp,
+        'upload_ip': deviceInfo.ipAddress || 'Unknown',
+        'upload_location': deviceInfo.location || 'Unknown',
+        'upload_browser': deviceInfo.browser || 'Unknown',
+        'upload_browser_version': deviceInfo.browserVersion || 'Unknown',
+        'upload_os': deviceInfo.os || 'Unknown',
+        'upload_device_type': deviceInfo.deviceType || 'Unknown',
+        'upload_screen': deviceInfo.screen || 'Unknown',
+        'upload_timezone': deviceInfo.timezone || 'Unknown',
+        'upload_language': deviceInfo.language || 'Unknown',
+        'upload_platform': deviceInfo.platform || 'Unknown'
       };
 
       const form = new FormData();
