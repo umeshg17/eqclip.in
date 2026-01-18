@@ -566,16 +566,30 @@ class GoogleDriveUploader {
       }
       
       // Add device and network information
-      const deviceDetails = [
-        `Browser: ${deviceInfo.browser || 'Unknown'}${deviceInfo.browserVersion ? ' ' + deviceInfo.browserVersion : ''}`,
-        `OS: ${deviceInfo.os || 'Unknown'}`,
-        `Device: ${deviceInfo.deviceType || 'Unknown'}`,
-        `Platform: ${deviceInfo.platform || 'Unknown'}`,
-        `IP: ${deviceInfo.ipAddress || 'Unknown'}`,
-        `Location: ${deviceInfo.location || 'Unknown'}`
-      ].filter(line => !line.includes('Unknown')).join(' | ');
+      const deviceParts = [];
+      if (deviceInfo.browser && deviceInfo.browser !== 'Unknown') {
+        deviceParts.push(`Browser: ${deviceInfo.browser}${deviceInfo.browserVersion && deviceInfo.browserVersion !== 'Unknown' ? ' ' + deviceInfo.browserVersion : ''}`);
+      }
+      if (deviceInfo.os && deviceInfo.os !== 'Unknown') {
+        deviceParts.push(`OS: ${deviceInfo.os}`);
+      }
+      if (deviceInfo.deviceType && deviceInfo.deviceType !== 'Unknown') {
+        deviceParts.push(`Device: ${deviceInfo.deviceType}`);
+      }
+      if (deviceInfo.platform && deviceInfo.platform !== 'Unknown') {
+        deviceParts.push(`Platform: ${deviceInfo.platform}`);
+      }
+      if (deviceInfo.ipAddress && deviceInfo.ipAddress !== 'Unknown') {
+        deviceParts.push(`IP: ${deviceInfo.ipAddress}`);
+      }
+      if (deviceInfo.location && deviceInfo.location !== 'Unknown') {
+        deviceParts.push(`Location: ${deviceInfo.location}`);
+      }
       
+      const deviceDetails = deviceParts.length > 0 ? deviceParts.join(' | ') : null;
       metadata.description = uploaderInfo + (deviceDetails ? `\n\n${deviceDetails}` : '');
+      
+      console.log('File description:', metadata.description);
       
       // Add comprehensive audit trail as custom properties
       metadata.properties = {
