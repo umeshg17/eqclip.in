@@ -49,21 +49,55 @@ class GoogleDriveUploader {
       this.tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: clientId,
         scope: this.SCOPES,
-        callback: (response) => {
+        callback: async (response) => {
           if (response.error) {
-            console.error('Authentication error:', response.error);
-            this.showError('Authentication failed. Please try again.');
+            // If user interaction required, show auth button
+            if (response.error === 'popup_closed_by_user' || response.error === 'access_denied') {
+              console.log('User cancelled authentication');
+              return;
+            }
+            // For other errors, try silent refresh first
+            if (response.error !== 'popup_blocked') {
+              console.error('Authentication error:', response.error);
+              this.showError('Authentication failed. Please try again.');
+            }
             return;
           }
           this.gapi.client.setToken(response);
-          this.onAuthSuccess();
+          await this.onAuthSuccess();
         },
       });
+      
+      // Try to get token silently on initialization (if user has already authorized)
+      setTimeout(() => {
+        this.tokenClient.requestAccessToken({ prompt: '' });
+      }, 100);
 
-      // Check if already authenticated
+      // Check if already authenticated - verify token is still valid
       const token = this.gapi.client.getToken();
-      if (token) {
-        this.onAuthSuccess();
+      if (token && token.access_token) {
+        // Verify token is still valid by making a test request
+        try {
+          const testResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+              'Authorization': `Bearer ${token.access_token}`
+            }
+          });
+          
+          if (testResponse.ok) {
+            // Token is valid, restore session
+            console.log('Valid token found, restoring session');
+            await this.onAuthSuccess();
+          } else {
+            // Token expired or invalid, clear it
+            console.log('Token expired, clearing session');
+            this.gapi.client.setToken('');
+          }
+        } catch (error) {
+          console.log('Error verifying token:', error);
+          // Clear invalid token
+          this.gapi.client.setToken('');
+        }
       }
     } catch (error) {
       console.error('Error initializing Google API:', error);
@@ -140,13 +174,29 @@ class GoogleDriveUploader {
 
     // Check if user is already authenticated
     const token = this.gapi.client.getToken();
-    if (token) {
-      this.onAuthSuccess();
-      return;
+    if (token && token.access_token) {
+      // Verify token is still valid
+      try {
+        const testResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+          headers: {
+            'Authorization': `Bearer ${token.access_token}`
+          }
+        });
+        
+        if (testResponse.ok) {
+          // Token is valid
+          await this.onAuthSuccess();
+          return;
+        }
+      } catch (error) {
+        console.log('Token validation failed, requesting new token');
+        // Token invalid, clear it and request new one
+        this.gapi.client.setToken('');
+      }
     }
 
-    // Request access token
-    this.tokenClient.requestAccessToken({ prompt: 'consent' });
+    // Request access token (silent first, then with consent if needed)
+    this.tokenClient.requestAccessToken({ prompt: '' }); // Try silent first
   }
 
   async onAuthSuccess() {
