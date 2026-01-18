@@ -481,6 +481,12 @@ class GoogleDriveUploader {
             <button class="btn ghost" onclick="driveUploader.retryUpload(${index})" style="padding: .4rem .6rem; font-size: .85rem;">Retry</button>
           </div>
         `;
+      } else if (item.status === 'skipped') {
+        statusHtml = `
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="upload-status" style="color: var(--muted);">⊘ Already exists</span>
+          </div>
+        `;
       }
       
       return `
@@ -536,6 +542,47 @@ class GoogleDriveUploader {
     console.log(`Finished uploading all ${pendingFiles.length} files`);
   }
 
+  async checkFileExists(fileName, fileSize, uploaderEmail) {
+    try {
+      // Build query to search for files with same name, size, and uploader
+      let query = `name='${fileName.replace(/'/g, "\\'")}' and trashed=false`;
+      
+      // Add folder constraint if folder ID is set
+      if (this.folderId) {
+        query += ` and '${this.folderId}' in parents`;
+      }
+      
+      // Search for files with matching name and folder
+      const response = await this.gapi.client.drive.files.list({
+        q: query,
+        fields: 'files(id, name, size, properties)',
+        pageSize: 100
+      });
+      
+      if (response.result.files && response.result.files.length > 0) {
+        // Check each file for matching size and uploader email
+        for (const existingFile of response.result.files) {
+          // Check if size matches (check both native size and custom property)
+          const existingSize = existingFile.size || existingFile.properties?.file_size;
+          const sizeMatches = existingSize && String(existingSize) === String(fileSize);
+          
+          // Check if uploader email matches
+          const existingUploader = existingFile.properties?.uploader_email;
+          const uploaderMatches = existingUploader && existingUploader === uploaderEmail;
+          
+          if (sizeMatches && uploaderMatches) {
+            return existingFile; // Duplicate found
+          }
+        }
+      }
+      return null; // No duplicate found
+    } catch (error) {
+      console.warn('Error checking for duplicate file:', error);
+      // If check fails, allow upload to proceed (don't block on check errors)
+      return null;
+    }
+  }
+
   async uploadFile(item) {
     item.status = 'uploading';
     item.progress = 0;
@@ -543,6 +590,20 @@ class GoogleDriveUploader {
 
     try {
       const file = item.file;
+      
+      // Check for duplicate file before uploading
+      const duplicateFile = await this.checkFileExists(file.name, file.size, this.userEmail);
+      if (duplicateFile) {
+        item.status = 'skipped';
+        item.progress = 100;
+        item.error = 'File already exists';
+        this.renderFileList();
+        this.updateUploadButton();
+        this.showSuccess(`Skipped ${file.name}: File already exists (uploaded by ${this.userEmail})`);
+        console.log(`Skipped duplicate file: ${file.name}`);
+        return;
+      }
+      
       const metadata = {
         name: file.name,
       };
@@ -632,6 +693,7 @@ class GoogleDriveUploader {
         'uploader_email': this.userEmail || 'Unknown',
         'uploader_name': this.userName || 'Unknown',
         'upload_timestamp': uploadTimestamp,
+        'file_size': String(file.size), // Store file size for duplicate detection
         'upload_ip': deviceInfo.ipAddress || 'Unknown',
         'upload_location': deviceInfo.location || 'Unknown',
         'upload_browser': deviceInfo.browser || 'Unknown',
