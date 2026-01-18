@@ -35,7 +35,8 @@ This guide will help you set up the file upload feature to Google Drive on your 
      - User support email: Your email
      - Developer contact email: Your email
    - Click "Save and Continue" through the steps
-   - Add your email as a test user if needed
+   - **Important**: Under "Test users", click "ADD USERS" and add email addresses of people who will use the upload feature (this prevents the "unverified app" warning for them)
+   - Note: The `drive` scope requires app verification for public use, but test users can use it without verification
 4. Back in Credentials, click **Create Credentials** > **OAuth client ID** again
 5. Select **Web application** as the application type
 6. Name it (e.g., "Portfolio Web Client")
