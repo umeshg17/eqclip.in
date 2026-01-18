@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # or 'master' depending on your default branch
+      - master
   workflow_dispatch:
 
 permissions:
@@ -14,6 +14,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
