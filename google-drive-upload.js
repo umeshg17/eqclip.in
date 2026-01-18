@@ -758,6 +758,9 @@ class GoogleDriveUploader {
 
     const result = await response.json();
     item.driveFileId = result.id;
+    
+    // Transfer ownership to folder owner to avoid consuming uploader's Drive space
+    await this.transferFileOwnership(result.id);
   }
 
   async resumableUpload(form, item, metadata) {
@@ -811,11 +814,52 @@ class GoogleDriveUploader {
         item.driveFileId = result.id;
         item.progress = 100;
         this.renderFileList();
+        
+        // Transfer ownership to folder owner to avoid consuming uploader's Drive space
+        await this.transferFileOwnership(result.id);
         break;
       } else {
         const error = await chunkResponse.json();
         throw new Error(error.error?.message || 'Chunk upload failed');
       }
+    }
+  }
+
+  async transferFileOwnership(fileId) {
+    try {
+      // Get folder owner email from folder metadata
+      if (!this.folderId) {
+        console.log('No folder ID, cannot transfer ownership');
+        return;
+      }
+      
+      const folderResponse = await this.gapi.client.drive.files.get({
+        fileId: this.folderId,
+        fields: 'owners(emailAddress)'
+      });
+      
+      if (folderResponse.result.owners && folderResponse.result.owners.length > 0) {
+        const folderOwnerEmail = folderResponse.result.owners[0].emailAddress;
+        
+        // Transfer ownership to folder owner
+        const permissionResponse = await this.gapi.client.drive.permissions.create({
+          fileId: fileId,
+          transferOwnership: true,
+          requestBody: {
+            role: 'owner',
+            type: 'user',
+            emailAddress: folderOwnerEmail
+          }
+        });
+        
+        console.log('File ownership transferred to:', folderOwnerEmail);
+      } else {
+        console.warn('Could not get folder owner email for ownership transfer');
+      }
+    } catch (error) {
+      // Ownership transfer might fail due to permissions, but that's OK
+      // The file will still be uploaded, just owned by the uploader
+      console.warn('Could not transfer file ownership (file still uploaded):', error.message);
     }
   }
 
