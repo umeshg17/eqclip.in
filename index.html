@@ -225,16 +225,9 @@
               </svg>
             </div>
             <h3 style="margin: .5rem 0;">Drop files here or click to select</h3>
-            <p class="muted" style="margin-bottom: 1rem;">Select one or more files to upload to Google Drive</p>
+            <p class="muted" style="margin-bottom: 1rem;">Select one or more files to upload</p>
             <input type="file" id="fileInput" multiple>
             <label for="fileInput" class="btn ghost" style="cursor: pointer;">Choose Files</label>
-            <div style="margin-top: 1rem;">
-              <label style="display: flex; align-items: center; gap: 8px; justify-content: center; font-size: .9rem; color: var(--muted);">
-                <input type="text" id="folderIdInput" placeholder="Folder ID (optional)" style="padding: .5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: .9rem; width: 250px; max-width: 100%;">
-                <span>Target Google Drive Folder ID</span>
-              </label>
-              <p class="muted" style="margin-top: .5rem; font-size: .85rem;">Leave empty to upload to your Drive root, or enter a specific folder ID. Find it in the Google Drive URL: <code style="background: var(--bg); padding: 0.2rem 0.4rem; border-radius: 4px;">https://drive.google.com/drive/folders/FOLDER_ID</code></p>
-            </div>
           </div>
 
           <div class="file-list" id="fileList"></div>
