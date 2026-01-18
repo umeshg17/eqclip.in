@@ -46,58 +46,47 @@ class GoogleDriveUploader {
         throw new Error('Google Identity Services library not loaded');
       }
       
+      // Track if we're doing a silent token request
+      let isSilentRequest = true;
+      
       this.tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: clientId,
         scope: this.SCOPES,
         callback: async (response) => {
           if (response.error) {
+            // If user interaction required and this was a silent request, that's OK
+            if (isSilentRequest && (response.error.includes('interaction_required') || response.error === 'popup_blocked')) {
+              console.log('Silent token request failed - user needs to sign in');
+              isSilentRequest = false;
+              return; // Don't show error for silent failures
+            }
             // If user interaction required, show auth button
             if (response.error === 'popup_closed_by_user' || response.error === 'access_denied') {
               console.log('User cancelled authentication');
               return;
             }
-            // For other errors, try silent refresh first
-            if (response.error !== 'popup_blocked') {
+            // For other errors during explicit auth
+            if (!isSilentRequest && response.error !== 'popup_blocked') {
               console.error('Authentication error:', response.error);
               this.showError('Authentication failed. Please try again.');
             }
+            isSilentRequest = false;
             return;
           }
+          // Success - token received
           this.gapi.client.setToken(response);
+          isSilentRequest = false;
           await this.onAuthSuccess();
         },
       });
       
-      // Try to get token silently on initialization (if user has already authorized)
-      setTimeout(() => {
+      // Try to get token silently first (if user has already authorized)
+      // This will call the callback with either success or an error requiring interaction
+      try {
         this.tokenClient.requestAccessToken({ prompt: '' });
-      }, 100);
-
-      // Check if already authenticated - verify token is still valid
-      const token = this.gapi.client.getToken();
-      if (token && token.access_token) {
-        // Verify token is still valid by making a test request
-        try {
-          const testResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-            headers: {
-              'Authorization': `Bearer ${token.access_token}`
-            }
-          });
-          
-          if (testResponse.ok) {
-            // Token is valid, restore session
-            console.log('Valid token found, restoring session');
-            await this.onAuthSuccess();
-          } else {
-            // Token expired or invalid, clear it
-            console.log('Token expired, clearing session');
-            this.gapi.client.setToken('');
-          }
-        } catch (error) {
-          console.log('Error verifying token:', error);
-          // Clear invalid token
-          this.gapi.client.setToken('');
-        }
+      } catch (error) {
+        console.log('Silent token request error:', error);
+        isSilentRequest = false;
       }
     } catch (error) {
       console.error('Error initializing Google API:', error);
@@ -195,8 +184,8 @@ class GoogleDriveUploader {
       }
     }
 
-    // Request access token (silent first, then with consent if needed)
-    this.tokenClient.requestAccessToken({ prompt: '' }); // Try silent first
+    // Request access token with consent prompt (explicit user action)
+    this.tokenClient.requestAccessToken({ prompt: 'consent' });
   }
 
   async onAuthSuccess() {
