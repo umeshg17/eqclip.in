@@ -869,6 +869,7 @@ class GoogleDriveUploader {
         
         if (existingPermission && existingPermission.id) {
           // Update existing permission to add pendingOwner flag
+          // Note: Must include role field when updating permission
           console.log('Folder owner already has access. Updating permission to initiate ownership transfer...');
           const updateResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions/${existingPermission.id}`, {
             method: 'PATCH',
@@ -877,6 +878,7 @@ class GoogleDriveUploader {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+              role: existingPermission.role || 'writer', // Keep existing role or default to writer
               pendingOwner: true
             })
           });
