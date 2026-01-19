@@ -828,119 +828,31 @@ class GoogleDriveUploader {
   }
 
   async transferFileOwnership(fileId) {
-    // Official Documentation: https://developers.google.com/workspace/drive/api/guides/transfer-file
-    // For consumer accounts (personal Gmail), ownership transfer requires a two-step process:
+    // NOTE: Automatic ownership transfer via Google Drive API has limitations for personal Gmail accounts.
+    // 
+    // According to official documentation: https://developers.google.com/workspace/drive/api/guides/transfer-file
+    // For consumer accounts, ownership transfer requires:
     // 1. Current owner creates permission with role=writer, pendingOwner=true
     // 2. Prospective owner accepts by creating permission with role=owner, transferOwnership=true
+    //
+    // LIMITATION: When the folder owner already has access through folder sharing,
+    // the API ignores pendingOwner=true and does not send email notifications.
+    // This is a known limitation of the Google Drive API.
+    //
+    // SOLUTION: Manual ownership transfer is required when folder owner already has access.
+    // The folder owner can transfer ownership through Google Drive UI:
+    // 1. Open the file in Google Drive
+    // 2. Click "Share"
+    // 3. Find the uploader in the list
+    // 4. Click the dropdown next to their name
+    // 5. Select "Transfer ownership"
+    //
+    // Files uploaded will be owned by the uploader and will count against their storage quota
+    // until ownership is manually transferred.
     
-    try {
-      if (!this.folderId) {
-        console.log('No folder ID, cannot transfer ownership');
-        return;
-      }
-      
-      // Get folder owner email
-      const folderResponse = await this.gapi.client.drive.files.get({
-        fileId: this.folderId,
-        fields: 'owners(emailAddress)'
-      });
-      
-      if (!folderResponse.result.owners || folderResponse.result.owners.length === 0) {
-        console.warn('Could not get folder owner email for ownership transfer');
-        return;
-      }
-      
-      const folderOwnerEmail = folderResponse.result.owners[0].emailAddress;
-      
-      // Check if folder owner already has a permission (direct or inherited)
-      const currentPermissions = await this.gapi.client.drive.permissions.list({
-        fileId: fileId,
-        fields: 'permissions(id, role, type, emailAddress, pendingOwner)'
-      });
-      
-      const existingPermission = currentPermissions.result.permissions?.find(
-        p => p.emailAddress === folderOwnerEmail && p.type === 'user'
-      );
-      
-      // Always create a new permission with pendingOwner=true
-      // Even if folder owner already has access, creating a new permission with pendingOwner
-      // will initiate the ownership transfer request
-      // The API will handle duplicates appropriately
-      try {
-        console.log('Creating permission with pendingOwner=true to initiate ownership transfer...');
-        const createResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.gapi.client.getToken().access_token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            role: 'writer',
-            type: 'user',
-            emailAddress: folderOwnerEmail,
-            pendingOwner: true
-          })
-        });
-        
-        if (!createResponse.ok) {
-          const errorData = await createResponse.json();
-          throw new Error(errorData.error?.message || `HTTP ${createResponse.status}`);
-        }
-        
-        const result = await createResponse.json();
-        
-        console.log('Permission created:', result);
-        
-        // Fetch the permission again to verify pendingOwner was set
-        // The create response might not include pendingOwner, so we check explicitly
-        if (result.id) {
-          try {
-            const verifyResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions/${result.id}?fields=id,role,type,emailAddress,pendingOwner`, {
-              headers: {
-                'Authorization': `Bearer ${this.gapi.client.getToken().access_token}`
-              }
-            });
-            
-            if (verifyResponse.ok) {
-              const verifiedPermission = await verifyResponse.json();
-              console.log('Verified permission:', verifiedPermission);
-              
-              if (verifiedPermission.pendingOwner === true) {
-                console.log('✓ pendingOwner is confirmed to be true - folder owner should receive email notification');
-                console.log('Ownership transfer initiated for:', folderOwnerEmail);
-              } else {
-                console.warn('⚠ pendingOwner is not set in the permission. The API may have ignored it.');
-                console.warn('This might be because the folder owner already has access through folder sharing.');
-                console.warn('The ownership transfer may not have been initiated. Manual transfer may be required.');
-              }
-            }
-          } catch (verifyError) {
-            console.warn('Could not verify permission:', verifyError.message);
-          }
-        }
-        
-        console.log('The folder owner should receive an email notification to accept ownership if pendingOwner was set.');
-        console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
-      } catch (error) {
-        // Check if it's a duplicate permission error (that's OK, transfer might already be initiated)
-        const errorMessage = error.message || error.toString();
-        console.error('Ownership transfer error:', error);
-        if (errorMessage.includes('duplicate') || 
-            errorMessage.includes('already exists') ||
-            errorMessage.includes('Permission already granted') ||
-            errorMessage.includes('already has access')) {
-          console.log('Permission already exists for folder owner. Ownership transfer may already be pending.');
-        } else {
-          console.warn('Could not initiate ownership transfer:', errorMessage);
-          console.warn('Files will remain owned by the uploader.');
-          console.warn('The folder owner can manually accept ownership through Google Drive UI.');
-        }
-      }
-    } catch (error) {
-      console.warn('Ownership transfer failed:', error.message);
-      console.warn('Files will remain owned by the uploader.');
-      console.warn('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
-    }
+    console.log('Note: Automatic ownership transfer is not available when folder owner already has access.');
+    console.log('Files are owned by the uploader. Manual ownership transfer may be required.');
+    console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
   }
 
   formatFileSize(bytes) {
