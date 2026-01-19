@@ -889,18 +889,37 @@ class GoogleDriveUploader {
         
         const result = await createResponse.json();
         
-        console.log('Permission result:', result);
-        console.log('Ownership transfer initiated for:', folderOwnerEmail);
+        console.log('Permission created:', result);
         
-        // Verify that pendingOwner was set
-        if (result.pendingOwner === true) {
-          console.log('✓ pendingOwner is set to true - folder owner should receive email notification');
-        } else {
-          console.warn('⚠ pendingOwner is not true in response:', result.pendingOwner);
-          console.warn('The ownership transfer may not have been initiated properly.');
+        // Fetch the permission again to verify pendingOwner was set
+        // The create response might not include pendingOwner, so we check explicitly
+        if (result.id) {
+          try {
+            const verifyResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions/${result.id}?fields=id,role,type,emailAddress,pendingOwner`, {
+              headers: {
+                'Authorization': `Bearer ${this.gapi.client.getToken().access_token}`
+              }
+            });
+            
+            if (verifyResponse.ok) {
+              const verifiedPermission = await verifyResponse.json();
+              console.log('Verified permission:', verifiedPermission);
+              
+              if (verifiedPermission.pendingOwner === true) {
+                console.log('✓ pendingOwner is confirmed to be true - folder owner should receive email notification');
+                console.log('Ownership transfer initiated for:', folderOwnerEmail);
+              } else {
+                console.warn('⚠ pendingOwner is not set in the permission. The API may have ignored it.');
+                console.warn('This might be because the folder owner already has access through folder sharing.');
+                console.warn('The ownership transfer may not have been initiated. Manual transfer may be required.');
+              }
+            }
+          } catch (verifyError) {
+            console.warn('Could not verify permission:', verifyError.message);
+          }
         }
         
-        console.log('The folder owner will receive an email notification to accept ownership.');
+        console.log('The folder owner should receive an email notification to accept ownership if pendingOwner was set.');
         console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
       } catch (error) {
         // Check if it's a duplicate permission error (that's OK, transfer might already be initiated)
