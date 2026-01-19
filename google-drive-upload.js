@@ -828,20 +828,86 @@ class GoogleDriveUploader {
   }
 
   async transferFileOwnership(fileId) {
-    // NOTE: Automatic ownership transfer via Google Drive API doesn't work for personal Gmail accounts.
-    // Google Drive API ownership transfer typically only works within the same Google Workspace domain.
-    // For personal accounts, ownership transfer requires manual action through the Google Drive UI.
-    // 
-    // Files uploaded will be owned by the uploader and will count against their storage quota.
-    // The folder owner can manually transfer ownership after upload if needed:
-    // 1. Open the file in Google Drive
-    // 2. Click "Share" 
-    // 3. Find the folder owner in the list
-    // 4. Click the dropdown next to their name
-    // 5. Select "Transfer ownership"
+    // Official Documentation: https://developers.google.com/workspace/drive/api/guides/transfer-file
+    // For consumer accounts (personal Gmail), ownership transfer requires a two-step process:
+    // 1. Current owner creates permission with role=writer, pendingOwner=true
+    // 2. Prospective owner accepts by creating permission with role=owner, transferOwnership=true
     
-    console.log('Note: Files are owned by the uploader due to Google Drive API limitations for personal accounts.');
-    console.log('Manual ownership transfer may be required through Google Drive UI.');
+    try {
+      if (!this.folderId) {
+        console.log('No folder ID, cannot transfer ownership');
+        return;
+      }
+      
+      // Get folder owner email
+      const folderResponse = await this.gapi.client.drive.files.get({
+        fileId: this.folderId,
+        fields: 'owners(emailAddress)'
+      });
+      
+      if (!folderResponse.result.owners || folderResponse.result.owners.length === 0) {
+        console.warn('Could not get folder owner email for ownership transfer');
+        return;
+      }
+      
+      const folderOwnerEmail = folderResponse.result.owners[0].emailAddress;
+      
+      // Check if folder owner already has a permission
+      const currentPermissions = await this.gapi.client.drive.permissions.list({
+        fileId: fileId,
+        fields: 'permissions(id, role, type, emailAddress)'
+      });
+      
+      const existingPermission = currentPermissions.result.permissions?.find(
+        p => p.emailAddress === folderOwnerEmail
+      );
+      
+      if (existingPermission) {
+        // Update existing permission to initiate ownership transfer
+        // For consumer accounts, use pendingOwner=true first
+        try {
+          await this.gapi.client.drive.permissions.update({
+            fileId: fileId,
+            permissionId: existingPermission.id,
+            requestBody: {
+              role: 'writer',
+              pendingOwner: true
+            }
+          });
+          
+          console.log('Ownership transfer initiated for:', folderOwnerEmail);
+          console.log('The folder owner will receive an email notification to accept ownership.');
+          console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
+        } catch (error) {
+          console.warn('Could not initiate ownership transfer:', error.message);
+          console.warn('Files will remain owned by the uploader.');
+        }
+      } else {
+        // Create new permission with pendingOwner=true
+        try {
+          await this.gapi.client.drive.permissions.create({
+            fileId: fileId,
+            requestBody: {
+              role: 'writer',
+              type: 'user',
+              emailAddress: folderOwnerEmail,
+              pendingOwner: true
+            }
+          });
+          
+          console.log('Ownership transfer initiated for:', folderOwnerEmail);
+          console.log('The folder owner will receive an email notification to accept ownership.');
+          console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
+        } catch (error) {
+          console.warn('Could not initiate ownership transfer:', error.message);
+          console.warn('Files will remain owned by the uploader.');
+        }
+      }
+    } catch (error) {
+      console.warn('Ownership transfer failed:', error.message);
+      console.warn('Files will remain owned by the uploader.');
+      console.warn('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
+    }
   }
 
   formatFileSize(bytes) {
