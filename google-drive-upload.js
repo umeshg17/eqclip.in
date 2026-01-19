@@ -862,57 +862,32 @@ class GoogleDriveUploader {
         p => p.emailAddress === folderOwnerEmail && p.type === 'user'
       );
       
-      // If folder owner already has access, we need to update their permission to add pendingOwner
-      // If they don't have access, we create a new permission with pendingOwner=true
+      // Always create a new permission with pendingOwner=true
+      // Even if folder owner already has access, creating a new permission with pendingOwner
+      // will initiate the ownership transfer request
+      // The API will handle duplicates appropriately
       try {
-        let result;
+        console.log('Creating permission with pendingOwner=true to initiate ownership transfer...');
+        const createResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.gapi.client.getToken().access_token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            role: 'writer',
+            type: 'user',
+            emailAddress: folderOwnerEmail,
+            pendingOwner: true
+          })
+        });
         
-        if (existingPermission && existingPermission.id) {
-          // Update existing permission to add pendingOwner flag
-          // Note: Must include role field when updating permission
-          console.log('Folder owner already has access. Updating permission to initiate ownership transfer...');
-          const updateResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions/${existingPermission.id}`, {
-            method: 'PATCH',
-            headers: {
-              'Authorization': `Bearer ${this.gapi.client.getToken().access_token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              role: existingPermission.role || 'writer', // Keep existing role or default to writer
-              pendingOwner: true
-            })
-          });
-          
-          if (!updateResponse.ok) {
-            const errorData = await updateResponse.json();
-            throw new Error(errorData.error?.message || `HTTP ${updateResponse.status}`);
-          }
-          
-          result = await updateResponse.json();
-        } else {
-          // Create new permission with pendingOwner=true
-          console.log('Creating new permission with pendingOwner=true for folder owner...');
-          const createResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${this.gapi.client.getToken().access_token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              role: 'writer',
-              type: 'user',
-              emailAddress: folderOwnerEmail,
-              pendingOwner: true
-            })
-          });
-          
-          if (!createResponse.ok) {
-            const errorData = await createResponse.json();
-            throw new Error(errorData.error?.message || `HTTP ${createResponse.status}`);
-          }
-          
-          result = await createResponse.json();
+        if (!createResponse.ok) {
+          const errorData = await createResponse.json();
+          throw new Error(errorData.error?.message || `HTTP ${createResponse.status}`);
         }
+        
+        const result = await createResponse.json();
         
         console.log('Permission result:', result);
         console.log('Ownership transfer initiated for:', folderOwnerEmail);
