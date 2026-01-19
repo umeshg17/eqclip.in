@@ -864,34 +864,43 @@ class GoogleDriveUploader {
       
       // Always create a new permission with pendingOwner=true
       // According to Google Drive API docs, we create (not update) to initiate transfer
-      // If permission already exists, API will return an error which we handle gracefully
+      // Using direct REST API call to ensure proper request format
       try {
-        await this.gapi.client.drive.permissions.create({
-          fileId: fileId,
-          requestBody: {
+        const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.gapi.client.getToken().access_token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
             role: 'writer',
             type: 'user',
             emailAddress: folderOwnerEmail,
             pendingOwner: true
-          }
+          })
         });
         
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
         console.log('Ownership transfer initiated for:', folderOwnerEmail);
         console.log('The folder owner will receive an email notification to accept ownership.');
         console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
       } catch (error) {
         // Check if it's a duplicate permission error (that's OK, transfer might already be initiated)
-        const errorMessage = error.result?.error?.message || error.message || '';
+        const errorMessage = error.message || error.toString();
         if (errorMessage.includes('duplicate') || 
             errorMessage.includes('already exists') ||
-            errorMessage.includes('Permission already granted')) {
+            errorMessage.includes('Permission already granted') ||
+            errorMessage.includes('already has access')) {
           console.log('Permission already exists for folder owner. Ownership transfer may already be pending.');
         } else {
           console.warn('Could not initiate ownership transfer:', errorMessage);
-          if (error.result?.error) {
-            console.warn('Error details:', error.result.error);
-          }
           console.warn('Files will remain owned by the uploader.');
+          console.warn('The folder owner can manually accept ownership through Google Drive UI.');
         }
       }
     } catch (error) {
