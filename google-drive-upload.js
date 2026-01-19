@@ -862,44 +862,35 @@ class GoogleDriveUploader {
         p => p.emailAddress === folderOwnerEmail
       );
       
-      if (existingPermission) {
-        // Update existing permission to initiate ownership transfer
-        // For consumer accounts, use pendingOwner=true first
-        try {
-          await this.gapi.client.drive.permissions.update({
-            fileId: fileId,
-            permissionId: existingPermission.id,
-            requestBody: {
-              role: 'writer',
-              pendingOwner: true
-            }
-          });
-          
-          console.log('Ownership transfer initiated for:', folderOwnerEmail);
-          console.log('The folder owner will receive an email notification to accept ownership.');
-          console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
-        } catch (error) {
-          console.warn('Could not initiate ownership transfer:', error.message);
-          console.warn('Files will remain owned by the uploader.');
-        }
-      } else {
-        // Create new permission with pendingOwner=true
-        try {
-          await this.gapi.client.drive.permissions.create({
-            fileId: fileId,
-            requestBody: {
-              role: 'writer',
-              type: 'user',
-              emailAddress: folderOwnerEmail,
-              pendingOwner: true
-            }
-          });
-          
-          console.log('Ownership transfer initiated for:', folderOwnerEmail);
-          console.log('The folder owner will receive an email notification to accept ownership.');
-          console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
-        } catch (error) {
-          console.warn('Could not initiate ownership transfer:', error.message);
+      // Always create a new permission with pendingOwner=true
+      // According to Google Drive API docs, we create (not update) to initiate transfer
+      // If permission already exists, API will return an error which we handle gracefully
+      try {
+        await this.gapi.client.drive.permissions.create({
+          fileId: fileId,
+          requestBody: {
+            role: 'writer',
+            type: 'user',
+            emailAddress: folderOwnerEmail,
+            pendingOwner: true
+          }
+        });
+        
+        console.log('Ownership transfer initiated for:', folderOwnerEmail);
+        console.log('The folder owner will receive an email notification to accept ownership.');
+        console.log('See: https://developers.google.com/workspace/drive/api/guides/transfer-file');
+      } catch (error) {
+        // Check if it's a duplicate permission error (that's OK, transfer might already be initiated)
+        const errorMessage = error.result?.error?.message || error.message || '';
+        if (errorMessage.includes('duplicate') || 
+            errorMessage.includes('already exists') ||
+            errorMessage.includes('Permission already granted')) {
+          console.log('Permission already exists for folder owner. Ownership transfer may already be pending.');
+        } else {
+          console.warn('Could not initiate ownership transfer:', errorMessage);
+          if (error.result?.error) {
+            console.warn('Error details:', error.result.error);
+          }
           console.warn('Files will remain owned by the uploader.');
         }
       }
