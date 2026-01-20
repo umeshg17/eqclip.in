@@ -16,7 +16,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0  # Fetch all history for proper git operations
       
     - name: Set up Python
@@ -30,7 +29,7 @@ jobs:
         
     - name: Fetch LeetCode rank
       run: |
-        python3 fetch-leetcode-rank.py
+        python3 fetch-leetcode-rank.py || exit 1
         
     - name: Commit and push if data changed
       run: |
@@ -39,8 +38,7 @@ jobs:
         git add leetcode-rank-data.json
         if ! git diff --staged --quiet; then
           git commit -m "Update LeetCode rank data [skip ci]"
-          git push
+          git push origin HEAD:master
         else
           echo "No changes to commit"
         fi
-
