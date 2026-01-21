@@ -37,7 +37,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add leetcode-rank-data.json
         if ! git diff --staged --quiet; then
-          git commit -m "Update LeetCode rank data [skip ci]"
+          git commit -m "Update LeetCode rank data"
           git push origin HEAD:master
         else
           echo "No changes to commit"
