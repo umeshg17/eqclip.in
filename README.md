@@ -216,4 +216,4 @@ This repository includes comprehensive documentation for all features:
 
 ## License
 
-This portfolio template is free to use and modify for personal and commercial projects.
+This portfolio template is free to use and modify for personal and commercial projects. 
