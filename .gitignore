@@ -31,6 +31,3 @@ Thumbs.db
 # Logs
 logs
 *.log
-
-# Google Drive API Configuration (contains sensitive credentials)
-google-drive-config.js

@@ -10,7 +10,6 @@ A clean, fast, and maintainable portfolio website built with vanilla HTML, CSS, 
 - **Fast loading** - No frameworks, just vanilla web technologies
 - **Accessible** - Semantic HTML and keyboard navigation
 - **Modern styling** - CSS Grid, Flexbox, and custom properties
-- **Google Drive file upload** - Secure file sharing with audit trail ([Setup Guide](GOOGLE_DRIVE_SETUP.md))
 - **LeetCode rank tracking** - Automatic daily rank monitoring and visualization
 
 ## File Structure
@@ -18,16 +17,9 @@ A clean, fast, and maintainable portfolio website built with vanilla HTML, CSS, 
 ```
 eqclip.in/
 ├── index.html                    # Main portfolio HTML file
-├── upload.html                   # Standalone file upload page
-├── send_to_umesh.html           # Alternative upload page (alias)
 ├── data.yaml                     # ✅ EDIT HERE - All portfolio content (YAML format)
 ├── data-loader.js                # JavaScript to load YAML data
-├── google-drive-upload.js        # Google Drive upload functionality
-├── google-drive-config.js        # Google API credentials (not in repo, generated on deploy)
-├── google-drive-config.js.template # Template for Google API config
 ├── README.md                     # Main documentation (this file)
-├── GOOGLE_DRIVE_SETUP.md        # Google Drive setup guide
-├── SECURITY.md                   # Security best practices
 └── .github/workflows/
     ├── deploy-pages.yml         # GitHub Pages deployment workflow
     └── fetch-leetcode-rank.yml  # Daily LeetCode rank tracking
@@ -202,17 +194,7 @@ If the rank fetching fails:
 
 ## Documentation
 
-This repository includes comprehensive documentation for all features:
-
 - **[README.md](README.md)** (this file) - Overview, setup, and usage guide
-- **[GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md)** - Complete guide for setting up the Google Drive file upload feature
-- **[SECURITY.md](SECURITY.md)** - Security best practices for Google Drive API credentials and deployment
-
-### Quick Links
-
-- **Setting up file upload?** → See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md)
-- **Deploying securely?** → See [SECURITY.md](SECURITY.md)
-- **Updating portfolio content?** → See [How to Update Content](#how-to-update-content) section above
 
 ## License
 
