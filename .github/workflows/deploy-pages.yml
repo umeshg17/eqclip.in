@@ -25,6 +25,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache-bust data-loader.js for CDN/browsers
+        run: |
+          SHORT=$(echo "$GITHUB_SHA" | cut -c1-7)
+          sed -i "s|src=\"data-loader.js\"|src=\"data-loader.js?v=${SHORT}\"|g" index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
