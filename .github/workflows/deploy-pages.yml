@@ -27,7 +27,10 @@ jobs:
 
       - name: Cache-bust data-loader.js for CDN/browsers
         run: |
-          SHORT=$(echo "$GITHUB_SHA" | cut -c1-7)
+          # workflow_run: use the completed workflow's head commit; push/dispatch: use GITHUB_SHA
+          HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
+          if [ -n "$HEAD_SHA" ]; then H="$HEAD_SHA"; else H="$GITHUB_SHA"; fi
+          SHORT=$(echo "$H" | cut -c1-7)
           sed -i "s|src=\"data-loader.js\"|src=\"data-loader.js?v=${SHORT}\"|g" index.html
 
       - name: Setup Pages
