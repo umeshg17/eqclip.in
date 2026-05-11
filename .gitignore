@@ -31,3 +31,19 @@ Thumbs.db
 # Logs
 logs
 *.log
+
+# LaTeX (resume build)
+resume/latex/*.pdf
+resume/latex/*.aux
+resume/latex/*.log
+resume/latex/*.out
+resume/latex/*.fdb_latexmk
+resume/latex/*.fls
+resume/latex/*.synctex.gz
+templates/resume-simple/*.pdf
+templates/resume-simple/*.aux
+templates/resume-simple/*.log
+templates/resume-simple/*.out
+templates/resume-simple/*.fdb_latexmk
+templates/resume-simple/*.fls
+templates/resume-simple/*.synctex.gz

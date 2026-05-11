@@ -2,6 +2,20 @@
 /** Set true to load rank data; also remove `hidden` from the LeetCode nav link and section in index.html. */
 const ENABLE_LEETCODE = false;
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function escapeAttr(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+}
+
 class PortfolioDataLoader {
   constructor() {
     this.data = null;
@@ -9,15 +23,9 @@ class PortfolioDataLoader {
 
   async loadData() {
     try {
-      // Load YAML directly
-      const response = await fetch('data.yaml');
+      const response = await fetch(`data.yaml?v=${Date.now()}`, { cache: 'no-store' });
       const yamlText = await response.text();
-      console.log('Raw YAML text:', yamlText.substring(0, 500) + '...'); // Debug log
-      
-      // Use js-yaml library for reliable parsing
       this.data = this.parseYAML(yamlText);
-      console.log('Parsed YAML data:', this.data); // Debug log
-      console.log('Projects data:', this.data.projects); // Debug log
       this.populatePortfolio();
     } catch (error) {
       console.error('Error loading YAML data:', error);
@@ -26,299 +34,321 @@ class PortfolioDataLoader {
   }
 
   parseYAML(yamlText) {
-    // Use js-yaml library for reliable parsing
-    try {
-      if (typeof jsyaml !== 'undefined') {
-        return jsyaml.load(yamlText);
-      } else {
-        console.error('js-yaml library not loaded');
-        throw new Error('js-yaml library not available');
-      }
-    } catch (error) {
-      console.error('Error parsing YAML:', error);
-      throw error;
+    if (typeof jsyaml === 'undefined') {
+      throw new Error('js-yaml library not available');
     }
+    return jsyaml.load(yamlText);
   }
 
   showError() {
-    // Show error message if data loading fails
-    const errorMsg = 'Error loading portfolio data. Please check the console for details.';
-    document.querySelector('.pill').textContent = errorMsg;
-    document.querySelector('h1').innerHTML = `Hi, I'm <span style="background:linear-gradient(135deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">Error</span>.`;
+    const pill = document.querySelector('.pill');
+    if (pill) pill.textContent = 'Could not load portfolio data';
+    const h1 = document.querySelector('h1');
+    if (h1) {
+      h1.innerHTML = `Hi, I'm <span class="text-gradient">Error</span>`;
+    }
+    const kicker = document.querySelector('.kicker');
+    if (kicker) {
+      kicker.textContent = 'Please refresh the page or open the browser console for details.';
+    }
   }
 
   populatePortfolio() {
-    if (!this.data) {
-      console.error('No data loaded');
-      return;
-    }
+    if (!this.data) return;
 
-    console.log('Populating portfolio with data:', this.data);
-
-    // Populate personal info
     this.populatePersonalInfo();
-    
-    // Populate projects
     this.populateProjects();
-    
-    // Populate skills
     this.populateSkills();
-    
-    // Populate highlights
     this.populateHighlights();
-    
-    // Populate experience
     this.populateExperience();
-    
-    // Populate contact
+    this.populateCertifications();
     this.populateContact();
-    
-    // Populate footer
     this.populateFooter();
-    
+
     if (ENABLE_LEETCODE) {
       this.loadLeetCodeChart();
     }
-    
-    // Fallback: Ensure we scroll to hash after all content is populated
-    // This handles cases where chart loads quickly or if there are other async operations
+
     if (window.location.hash) {
-      setTimeout(() => {
-        this.scrollToHashIfNeeded();
-      }, 500);
+      setTimeout(() => this.scrollToHashIfNeeded(), 400);
     }
+  }
+
+  linkifyDescription(html) {
+    if (!this.data.auto_links) return html;
+    let out = html;
+    Object.entries(this.data.auto_links).forEach(([text, url]) => {
+      const regex = new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      out = out.replace(regex, `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`);
+    });
+    return out;
   }
 
   populatePersonalInfo() {
     const personal = this.data.personal;
-    if (!personal) {
-      console.error('No personal data found');
-      return;
-    }
+    if (!personal) return;
 
-    console.log('Populating personal info:', personal);
+    const pill = document.querySelector('.pill');
+    if (pill && personal.title) pill.textContent = personal.title;
 
-    // Update title
-    const pillElement = document.querySelector('.pill');
-    if (pillElement && personal.title) {
-      pillElement.textContent = personal.title;
-    }
-    
-    // Update name in h1
     const h1 = document.querySelector('h1');
     if (h1 && personal.name) {
-      h1.innerHTML = `Hi, I'm <span style="background:linear-gradient(135deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">${personal.name}</span>`;
+      h1.innerHTML = `Hi, I'm <span class="text-gradient">${personal.name}</span>`;
     }
-    
-    // Update description
-    const kickerElement = document.querySelector('.kicker');
-    if (kickerElement && personal.description) {
-      // Convert text to links using the auto_links mapping from data.yaml
-      let descriptionWithLinks = personal.description;
-      console.log('Original description:', descriptionWithLinks);
-      console.log('Auto links data:', this.data.auto_links);
-      
-      if (this.data.auto_links) {
-        Object.entries(this.data.auto_links).forEach(([text, url]) => {
-          console.log(`Processing link: "${text}" -> "${url}"`);
-          const regex = new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-          const before = descriptionWithLinks;
-          descriptionWithLinks = descriptionWithLinks.replace(regex, `<a href="${url}" target="_blank">${text}</a>`);
-          console.log(`Before: "${before}", After: "${descriptionWithLinks}"`);
-        });
-      }
-      console.log('Final description with links:', descriptionWithLinks);
-      kickerElement.innerHTML = descriptionWithLinks;
+
+    const kicker = document.querySelector('.kicker');
+    if (kicker && personal.description) {
+      kicker.innerHTML = this.linkifyDescription(personal.description);
     }
-    
-    // Update quick facts
-    const quickFactsList = document.querySelector('.card ul');
-    if (quickFactsList && personal.quick_facts && Array.isArray(personal.quick_facts)) {
-      quickFactsList.innerHTML = personal.quick_facts.map(fact => `<li>${fact}</li>`).join('');
+
+    const facts = document.getElementById('hero-facts');
+    if (facts && Array.isArray(personal.quick_facts)) {
+      facts.innerHTML = personal.quick_facts.map((fact) => `<li>${fact}</li>`).join('');
     }
-    
-    // Update skills tags
-    const tagsContainer = document.querySelector('.card div[style*="display:flex"]');
-    if (tagsContainer && personal.skills_tags && Array.isArray(personal.skills_tags)) {
-      tagsContainer.innerHTML = personal.skills_tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+
+    const tags = document.getElementById('hero-tags');
+    if (tags && Array.isArray(personal.skills_tags)) {
+      tags.innerHTML = personal.skills_tags.map((tag) => `<span class="tag">${tag}</span>`).join('');
     }
   }
 
   populateProjects() {
     const projects = this.data.projects;
-    console.log('Raw projects data:', projects);
-    console.log('Projects type:', typeof projects);
-    console.log('Is array:', Array.isArray(projects));
-    
-    if (!projects || !Array.isArray(projects)) {
-      console.error('No projects data found or not an array');
-      return;
-    }
+    if (!projects || !Array.isArray(projects)) return;
 
-    console.log('Populating projects:', projects);
-    console.log('First project:', projects[0]);
-    console.log('First project title:', projects[0]?.title);
+    const el = document.getElementById('projects-grid');
+    if (!el) return;
 
-    const projectsContainer = document.querySelector('#projects .grid');
-    if (!projectsContainer) {
-      console.error('Projects container not found');
-      return;
-    }
-
-    projectsContainer.innerHTML = projects.map(project => `
-      <article class="card project">
-        <h3>${project.title || 'Untitled Project'}</h3>
-        <p class="muted">${project.description || 'No description available'}</p>
-        <p>${Array.isArray(project.tags) ? project.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ') : ''}</p>
-        <a class="btn ghost" href="${project.link || '#'}">${project.link_text || 'View →'}</a>
+    el.innerHTML = projects
+      .map(
+        (project) => `
+      <article class="card project-card">
+        <h3>${project.title || 'Untitled'}</h3>
+        <p class="muted">${project.description || ''}</p>
+        <div class="tag-row">${Array.isArray(project.tags) ? project.tags.map((tag) => `<span class="tag">${tag}</span>`).join('') : ''}</div>
+        <a class="link-arrow" href="${project.link || '#'}">${project.link_text || 'View'} →</a>
       </article>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   populateSkills() {
     const skills = this.data.skills;
-    if (!skills || !Array.isArray(skills)) {
-      console.error('No skills data found or not an array');
-      return;
-    }
+    if (!skills || !Array.isArray(skills)) return;
 
-    console.log('Populating skills:', skills);
+    const el = document.getElementById('skills-grid');
+    if (!el) return;
 
-    const skillsContainer = document.querySelector('#skills .grid');
-    if (!skillsContainer) {
-      console.error('Skills container not found');
-      return;
-    }
-
-    skillsContainer.innerHTML = skills.map(skill => `
-      <div class="card">
-        <h3>${skill.category || 'Unknown Category'}</h3>
-        ${skill.items && Array.isArray(skill.items) ? 
-          `<ul class="muted">${skill.items.map(item => `<li>${item}</li>`).join('')}</ul>` :
-          `<p class="muted">${skill.description || 'No description available'}</p>`
-        }
+    el.innerHTML = skills
+      .map((skill) => {
+        const body =
+          skill.items && Array.isArray(skill.items)
+            ? `<ul class="muted">${skill.items.map((item) => `<li>${item}</li>`).join('')}</ul>`
+            : `<p class="muted">${skill.description || ''}</p>`;
+        return `
+      <div class="card skill-card">
+        <h3>${skill.category || 'Category'}</h3>
+        ${body}
       </div>
-    `).join('');
+    `;
+      })
+      .join('');
   }
 
   populateHighlights() {
     const highlights = this.data.highlights;
-    if (!highlights || !Array.isArray(highlights)) {
-      console.error('No highlights data found or not an array');
-      return;
-    }
+    if (!highlights || !Array.isArray(highlights)) return;
 
-    console.log('Populating highlights:', highlights);
+    const el = document.getElementById('highlights-grid');
+    if (!el) return;
 
-    const highlightsContainer = document.querySelector('#highlights .grid');
-    if (!highlightsContainer) {
-      console.error('Highlights container not found');
-      return;
-    }
-
-    highlightsContainer.innerHTML = highlights.map(highlight => `
-      <div class="card">
-        <h3>${highlight.title || 'Untitled Highlight'}</h3>
+    el.innerHTML = highlights
+      .map(
+        (h) => `
+      <div class="card highlight-card">
+        <h3>${h.title || ''}</h3>
         <ul class="muted">
-          ${Array.isArray(highlight.items) ? highlight.items.map(item => `<li>${item}</li>`).join('') : '<li>No items available</li>'}
+          ${Array.isArray(h.items) ? h.items.map((item) => `<li>${item}</li>`).join('') : ''}
         </ul>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   populateExperience() {
     const experience = this.data.experience;
-    if (!experience || !Array.isArray(experience)) {
-      console.error('No experience data found or not an array');
-      return;
-    }
+    if (!experience || !Array.isArray(experience)) return;
 
-    console.log('Populating experience:', experience);
+    const el = document.getElementById('experience-timeline');
+    if (!el) return;
 
-    const experienceContainer = document.querySelector('#experience .timeline');
-    if (!experienceContainer) {
-      console.error('Experience container not found');
-      return;
-    }
-
-    experienceContainer.innerHTML = experience.map(exp => `
+    el.innerHTML = experience
+      .map((exp) => {
+        const bullets =
+          exp.items && Array.isArray(exp.items)
+            ? `<ul class="muted">${exp.items.map((item) => `<li>${item}</li>`).join('')}</ul>`
+            : '';
+        const extra = exp.additional_period
+          ? `<p class="muted"><strong>${exp.additional_period}</strong> · ${exp.additional_location || ''} — ${exp.additional_description || ''}</p>`
+          : '';
+        return `
       <div class="tl-item">
-        <h3>${exp.company || 'Unknown Company'} — ${exp.role || 'Unknown Role'}</h3>
-        <p class="muted">${exp.period || 'Unknown Period'} · ${exp.location || 'Unknown Location'}</p>
+        <h3>${exp.company || ''} — ${exp.role || ''}</h3>
+        <p class="meta muted">${exp.period || ''} · ${exp.location || ''}</p>
         ${exp.description ? `<p class="muted">${exp.description}</p>` : ''}
-        ${exp.items && Array.isArray(exp.items) ? `<ul class="muted">${exp.items.map(item => `<li>${item}</li>`).join('')}</ul>` : ''}
-        ${exp.additional_period ? `
-          <p class="muted">${exp.additional_period} · ${exp.additional_location || ''} — ${exp.additional_description || ''}</p>
-        ` : ''}
+        ${bullets}
+        ${extra}
       </div>
-    `).join('');
+    `;
+      })
+      .join('');
+  }
+
+  populateCertifications() {
+    const certs = this.data.certifications;
+    const el = document.getElementById('certifications-grid');
+    const section = document.getElementById('certifications');
+    const navLink = document.querySelector('a[href="#certifications"]');
+    if (!el || !section) return;
+
+    if (!certs || !Array.isArray(certs) || certs.length === 0) {
+      section.hidden = true;
+      if (navLink) navLink.hidden = true;
+      return;
+    }
+
+    section.hidden = false;
+    if (navLink) navLink.hidden = false;
+
+    el.innerHTML = certs
+      .map((c) => {
+        const title = escapeHtml(c.title || '');
+        const subtitle = escapeHtml(c.subtitle || '');
+        const url = escapeAttr(c.url || '#');
+        return `
+      <div class="card cert-card">
+        <h3>${title}</h3>
+        <p class="muted">${subtitle}</p>
+        <a class="link-arrow" href="${url}" target="_blank" rel="noopener noreferrer">Verify on Credly →</a>
+      </div>
+    `;
+      })
+      .join('');
   }
 
   populateContact() {
     const contact = this.data.contact;
-    if (!contact) {
-      console.error('No contact data found');
-      return;
-    }
+    if (!contact) return;
 
-    console.log('Populating contact:', contact);
+    const el = document.getElementById('contact-inner');
+    if (!el) return;
 
-    const contactContainer = document.querySelector('#contact .card');
-    if (!contactContainer) {
-      console.error('Contact container not found');
-      return;
-    }
+    const email = contact.email || '';
+    const phone = contact.phone_primary || '';
+    const telHref = phone ? `tel:${phone.replace(/\s/g, '')}` : '#';
 
-    contactContainer.innerHTML = `
-              <p>Let's connect on <strong>Platform Engineering and Infrastructure Reliability</strong>.</p>
-      <p>🔗 <a href="${contact.linkedin || '#'}">LinkedIn</a> · 💻 <a href="${contact.hackerrank || '#'}">HackerRank</a></p>
-      <p>✉️ <a href="mailto:${contact.email || ''}">${contact.email || 'No email'}</a></p>
-      <p>📞 <a href="tel:${contact.phone_primary || ''}">${contact.phone_primary || 'No phone'}</a></p>
+    el.innerHTML = `
+      <p class="contact-lede">Open to conversations about <strong>platform engineering</strong>, <strong>Kubernetes</strong>, and <strong>reliable cloud operations</strong>.</p>
+      <div class="contact-direct" aria-label="Email and phone">
+        <p class="contact-direct-hint">Click a value to select all, or use Copy.</p>
+        <div class="contact-row">
+          <span class="contact-label">Email</span>
+          <span class="contact-value" tabindex="0" title="Click to select">${escapeHtml(email)}</span>
+          <button type="button" class="copy-btn js-copy" data-copy="${escapeAttr(email)}">Copy</button>
+          <a class="contact-chip action" href="mailto:${escapeAttr(email)}">Mail</a>
+        </div>
+        <div class="contact-row">
+          <span class="contact-label">Phone</span>
+          <span class="contact-value" tabindex="0" title="Click to select">${escapeHtml(phone)}</span>
+          <button type="button" class="copy-btn js-copy" data-copy="${escapeAttr(phone)}">Copy</button>
+          <a class="contact-chip action" href="${escapeAttr(telHref)}">Call</a>
+        </div>
+      </div>
+      <div class="contact-links">
+        <a class="contact-chip" href="${contact.linkedin || '#'}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a class="contact-chip" href="${contact.hackerrank || '#'}" target="_blank" rel="noopener noreferrer">HackerRank</a>
+      </div>
     `;
+
+    el.querySelectorAll('.contact-value').forEach((span) => {
+      span.addEventListener('click', () => {
+        const range = document.createRange();
+        range.selectNodeContents(span);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      });
+    });
+
+    el.querySelectorAll('.js-copy').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-copy');
+        if (!text) return;
+        const prevLabel = btn.textContent;
+        const done = () => {
+          btn.textContent = 'Copied';
+          btn.disabled = true;
+          setTimeout(() => {
+            btn.textContent = prevLabel;
+            btn.disabled = false;
+          }, 1600);
+        };
+        const fallback = () => {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            return document.execCommand('copy');
+          } catch {
+            return false;
+          } finally {
+            document.body.removeChild(ta);
+          }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(() => {
+            if (fallback()) done();
+          });
+        } else if (fallback()) {
+          done();
+        }
+      });
+    });
   }
 
   populateFooter() {
     const footer = this.data.footer;
-    if (!footer) {
-      console.error('No footer data found');
-      return;
-    }
+    if (!footer) return;
 
-    console.log('Populating footer:', footer);
+    const nameEl = document.getElementById('footer-name');
+    if (nameEl && footer.name) nameEl.textContent = footer.name;
 
-    const footerNameElement = document.getElementById('footer-name');
-    if (footerNameElement && footer.name) {
-      footerNameElement.textContent = footer.name;
-    }
-
-    const footerMessageElement = document.getElementById('footer-message');
-    if (footerMessageElement && footer.message) {
-      footerMessageElement.textContent = footer.message;
-    }
+    const msgEl = document.getElementById('footer-message');
+    if (msgEl && footer.message) msgEl.textContent = footer.message;
   }
 
   async loadLeetCodeChart() {
     if (!ENABLE_LEETCODE) return;
     try {
-      // Avoid CDN/browser caching so we always read the latest file
       const response = await fetch(`leetcode-rank-data.json?ts=${Date.now()}`, { cache: 'no-store' });
       if (!response.ok) {
-        console.warn('LeetCode rank data not available');
         this.scrollToHashIfNeeded();
         return;
       }
-      
+
       const rankData = await response.json();
       if (!rankData.data || rankData.data.length === 0) {
-        console.warn('No LeetCode rank data available');
         this.scrollToHashIfNeeded();
         return;
       }
 
       this.renderLeetCodeChart(rankData.data);
       this.updateLeetCodeStats(rankData.data);
-      
-      // Scroll to hash after chart is rendered (chart rendering might change page height)
       this.scrollToHashIfNeeded();
     } catch (error) {
       console.error('Error loading LeetCode rank data:', error);
@@ -328,72 +358,72 @@ class PortfolioDataLoader {
 
   scrollToHashIfNeeded() {
     const hash = window.location.hash;
-    if (hash) {
-      // Wait a bit to ensure content is fully rendered (especially chart for leetcode)
-      setTimeout(() => {
-        const target = document.querySelector(hash);
-        if (target) {
-          const headerOffset = 80;
-          const elementPosition = target.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, hash === '#leetcode' ? 300 : 100);
-    }
+    if (!hash) return;
+    const headerEl = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'), 10) || 72;
+    const offset = headerEl + 12;
+    setTimeout(() => {
+      const target = document.querySelector(hash);
+      if (target) {
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, hash === '#leetcode' ? 280 : 80);
   }
 
   renderLeetCodeChart(data) {
     const ctx = document.getElementById('leetcodeChart');
-    if (!ctx) {
-      console.error('Chart canvas not found');
-      return;
+    if (!ctx || typeof Chart === 'undefined') return;
+
+    const cs = getComputedStyle(document.documentElement);
+    const accent = cs.getPropertyValue('--accent').trim() || '#38bdf8';
+    const textColor = cs.getPropertyValue('--text').trim();
+    const mutedColor = cs.getPropertyValue('--muted').trim();
+    const cardColor = cs.getPropertyValue('--surface').trim();
+    const borderColor = cs.getPropertyValue('--border').trim();
+
+    let accentFill = 'rgba(56, 189, 248, 0.12)';
+    if (accent.startsWith('#')) {
+      const hex = accent.slice(1);
+      const full = hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex;
+      const n = parseInt(full, 16);
+      if (!Number.isNaN(n)) {
+        accentFill = `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},0.12)`;
+      }
     }
 
-    // Get computed CSS variable values for theme-aware colors
-    const getComputedStyle = window.getComputedStyle(document.body);
-    const textColor = getComputedStyle.getPropertyValue('--text').trim();
-    const mutedColor = getComputedStyle.getPropertyValue('--muted').trim();
-    const cardColor = getComputedStyle.getPropertyValue('--card').trim();
-    const borderColor = getComputedStyle.getPropertyValue('--border').trim();
-
-    // Group data by date and pick the lowest (best) rank for each day
     const rankByDate = {};
-    data.forEach(entry => {
+    data.forEach((entry) => {
       const date = entry.date;
       if (!rankByDate[date] || entry.rank < rankByDate[date]) {
         rankByDate[date] = entry.rank;
       }
     });
 
-    // Convert to arrays sorted by date
     const sortedDates = Object.keys(rankByDate).sort((a, b) => new Date(a) - new Date(b));
     const dates = sortedDates;
-    const ranks = sortedDates.map(date => rankByDate[date]);
-
-    // Determine if we should use inverted Y-axis (lower rank is better)
+    const ranks = sortedDates.map((date) => rankByDate[date]);
     const isInverted = ranks.length > 0 && ranks[0] > 1000;
 
     new Chart(ctx, {
       type: 'line',
       data: {
         labels: dates,
-        datasets: [{
-          label: 'LeetCode Rank',
-          data: ranks,
-          borderColor: 'rgb(14, 165, 233)',
-          backgroundColor: 'rgba(14, 165, 233, 0.1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          pointBackgroundColor: 'rgb(14, 165, 233)',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2
-        }]
+        datasets: [
+          {
+            label: 'LeetCode rank',
+            data: ranks,
+            borderColor: accent,
+            backgroundColor: accentFill,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: accent,
+            pointBorderColor: cardColor,
+            pointBorderWidth: 2,
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -402,12 +432,7 @@ class PortfolioDataLoader {
           legend: {
             display: true,
             position: 'top',
-            labels: {
-              color: textColor,
-              font: {
-                size: 14
-              }
-            }
+            labels: { color: textColor, font: { size: 12, family: 'Plus Jakarta Sans, sans-serif' } },
           },
           tooltip: {
             mode: 'index',
@@ -415,67 +440,54 @@ class PortfolioDataLoader {
             backgroundColor: cardColor,
             titleColor: textColor,
             bodyColor: textColor,
-            borderColor: borderColor,
+            borderColor,
             borderWidth: 1,
             padding: 12,
             callbacks: {
-              label: function(context) {
-                return `Rank: ${context.parsed.y.toLocaleString()}`;
-              }
-            }
-          }
+              label(ctx) {
+                return `Rank: ${ctx.parsed.y.toLocaleString()}`;
+              },
+            },
+          },
         },
         scales: {
           x: {
             ticks: {
               color: mutedColor,
               maxRotation: 45,
-              minRotation: 45,
+              minRotation: 0,
               autoSkip: true,
-              autoSkipPadding: 10,
               maxTicksLimit: 10,
-              callback: function(value, index) {
+              callback(value, index) {
                 const date = dates[index];
                 if (!date) return '';
-                // Format date as "MMM DD" (e.g., "Jan 15")
-                const dateObj = new Date(date);
-                const month = dateObj.toLocaleDateString('en-US', { month: 'short' });
-                const day = dateObj.getDate();
-                return `${month} ${day}`;
-              }
+                const d = new Date(date);
+                return `${d.toLocaleDateString('en-US', { month: 'short' })} ${d.getDate()}`;
+              },
             },
-            grid: {
-              color: borderColor
-            }
+            grid: { color: borderColor },
           },
           y: {
             reverse: isInverted,
             ticks: {
               color: mutedColor,
-              callback: function(value) {
-                return value.toLocaleString();
-              }
+              callback(val) {
+                return val.toLocaleString();
+              },
             },
-            grid: {
-              color: borderColor
-            }
-          }
+            grid: { color: borderColor },
+          },
         },
-        interaction: {
-          mode: 'nearest',
-          axis: 'x',
-          intersect: false
-        }
-      }
+        interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      },
     });
   }
 
   updateLeetCodeStats(data) {
     if (!data || data.length === 0) return;
 
-    // Group data by date and pick the lowest (best) rank for each day
     const rankByDate = {};
-    data.forEach(entry => {
+    data.forEach((entry) => {
       const date = entry.date;
       const rankNum = Number(entry.rank);
       if (!rankByDate[date] || rankNum < rankByDate[date]) {
@@ -483,40 +495,26 @@ class PortfolioDataLoader {
       }
     });
 
-    // Get unique dates sorted
     const sortedDates = Object.keys(rankByDate).sort((a, b) => new Date(a) - new Date(b));
     const latestDate = sortedDates[sortedDates.length - 1];
-
-    // For the latest date, ensure we pick the minimum across all entries of that date
     const currentDayRanks = data
-      .filter(d => d.date === latestDate)
-      .map(d => Number(d.rank))
-      .filter(n => Number.isFinite(n));
+      .filter((d) => d.date === latestDate)
+      .map((d) => Number(d.rank))
+      .filter((n) => Number.isFinite(n));
     const currentRank = currentDayRanks.length ? Math.min(...currentDayRanks) : rankByDate[latestDate];
-
     const bestRank = Math.min(...Object.values(rankByDate));
     const daysTracked = sortedDates.length;
 
-    const currentRankEl = document.getElementById('currentRank');
-    if (currentRankEl) {
-      currentRankEl.textContent = currentRank.toLocaleString();
-    }
-
-    const bestRankEl = document.getElementById('bestRank');
-    if (bestRankEl) {
-      bestRankEl.textContent = bestRank.toLocaleString();
-    }
-
-    const daysTrackedEl = document.getElementById('daysTracked');
-    if (daysTrackedEl) {
-      daysTrackedEl.textContent = daysTracked;
-    }
+    const cur = document.getElementById('currentRank');
+    if (cur) cur.textContent = currentRank.toLocaleString();
+    const best = document.getElementById('bestRank');
+    if (best) best.textContent = bestRank.toLocaleString();
+    const days = document.getElementById('daysTracked');
+    if (days) days.textContent = daysTracked;
   }
 }
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded, initializing portfolio loader...');
   const loader = new PortfolioDataLoader();
   loader.loadData();
 });

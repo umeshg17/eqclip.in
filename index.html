@@ -8,258 +8,832 @@
   <meta property="og:title" content="Umesh Gaikwad — Portfolio">
   <meta property="og:description" content="DevOps • Kubernetes • CI/CD • Cloud">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#0ea5e9">
+  <meta name="theme-color" content="#08090d">
   <link rel="icon" type="image/png" href="favicon.png">
-  <!-- Only reference favicon.ico if it exists, otherwise use PNG -->
   <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg:#0b0c10; /* dark base */
-      --bg-soft:#11131a;
-      --card:#141824;
-      --text:#e7e9ee;
-      --muted:#a6adbb;
-      --accent:#0ea5e9;
-      --accent-2:#22c55e;
-      --border:rgba(255,255,255,0.08);
-      --shadow:rgba(0,0,0,0.35);
+    :root {
+      --font: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+      --bg: #08090d;
+      --bg-subtle: #0c0e14;
+      --surface: #12141c;
+      --surface-2: #181b26;
+      --text: #eef0f4;
+      --muted: #949db0;
+      --muted-2: #6b7385;
+      --accent: #38bdf8;
+      --accent-2: #34d399;
+      --accent-glow: rgba(56, 189, 248, 0.12);
+      --border: rgba(255, 255, 255, 0.065);
+      --border-hover: rgba(255, 255, 255, 0.12);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --radius: 14px;
+      --radius-lg: 22px;
+      --header-h: 72px;
+      --max: 1120px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .light{ --bg:#f7f8fb; --bg-soft:#ffffff; --card:#ffffff; --text:#0b1320; --muted:#5b6473; --border:rgba(0,0,0,0.08); --shadow:rgba(0,0,0,0.08);}  
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0; padding-top:64px; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:var(--bg); color:var(--text); line-height:1.65}
-    a{color:inherit; text-decoration:none}
-    img{max-width:100%; display:block}
-    .container{max-width:1100px; padding:0 20px; margin:0 auto}
-    header{position:fixed; top:0; left:0; right:0; z-index:50; backdrop-filter:saturate(180%) blur(12px); background:color-mix(in oklab, var(--bg) 70%, transparent)}
-    .nav{display:flex; align-items:center; justify-content:space-between; height:64px; border-bottom:1px solid var(--border); max-width:1100px; margin:0 auto; padding:0 20px}
-    .brand{display:flex; align-items:center; gap:10px; font-weight:700}
-    .brand-dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2))}
-    .nav a{opacity:.85; padding:.35rem .6rem; border-radius:.6rem}
-    .nav a:hover{background:var(--border)}
-    .btn{display:inline-flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,var(--accent),#3b82f6); color:white; border:none; padding:.8rem 1rem; border-radius:.8rem; box-shadow:0 8px 24px var(--shadow); font-weight:600}
-    .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--border); box-shadow:none}
-    .hero{padding:72px 0 32px}
-    .hero-inner{display:grid; grid-template-columns:1.35fr 1fr; gap:28px; align-items:center}
-    .pill{display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--border); padding:.35rem .6rem; border-radius:9999px; font-size:.9rem; color:var(--muted)}
-    h1{font-size:clamp(2rem,4vw,3rem); margin:.35rem 0 .75rem; line-height:1.1}
-    .kicker{color:var(--muted); margin-bottom:1.25rem}
-    .stack{display:flex; gap:12px; flex-wrap:wrap}
-    .card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 8px 32px var(--shadow)}
-    section{padding:48px 0; scroll-margin-top:80px}
-    .grid{display:grid; gap:18px}
-    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .tag{display:inline-block; font-size:.85rem; padding:.35rem .6rem; border:1px solid var(--border); border-radius:999px; color:var(--muted)}
-    .muted{color:var(--muted)}
-    .footer{padding:36px 0; border-top:1px solid var(--border); color:var(--muted); text-align:center}
-    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Liberation Mono","DejaVu Sans Mono",monospace; font-size:.85rem; border:1px solid var(--border); padding:.1rem .35rem; border-radius:.4rem}
-    .project{transition:transform .2s ease}
-    .project:hover{transform:translateY(-2px)}
-    .timeline{border-left:2px solid var(--border); padding-left:16px}
-    .tl-item{position:relative; margin:18px 0}
-    .tl-item::before{content:""; position:absolute; left:-11px; top:.4rem; width:10px; height:10px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-radius:9999px}
-    .theme-toggle{border:1px solid var(--border); background:transparent; border-radius:999px; padding:.45rem .6rem; cursor:pointer}
-    .btn:disabled{opacity:.5; cursor:not-allowed}
-    @media (max-width:900px){ .hero-inner{grid-template-columns:1fr} .grid-3{grid-template-columns:1fr} .grid-2{grid-template-columns:1fr} }
+
+    .light {
+      --bg: #f6f7f9;
+      --bg-subtle: #eef0f4;
+      --surface: #ffffff;
+      --surface-2: #f0f2f6;
+      --text: #0f1219;
+      --muted: #5c6578;
+      --muted-2: #7a8499;
+      --accent: #0284c7;
+      --accent-2: #059669;
+      --accent-glow: rgba(2, 132, 199, 0.08);
+      --border: rgba(15, 18, 25, 0.08);
+      --border-hover: rgba(15, 18, 25, 0.14);
+      --shadow: 0 20px 60px rgba(15, 18, 25, 0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      padding-top: var(--header-h);
+      font-family: var(--font);
+      font-size: 1rem;
+      line-height: 1.65;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 100% 60% at 85% -10%, var(--accent-glow), transparent 50%),
+        radial-gradient(ellipse 70% 50% at 10% 30%, rgba(52, 211, 153, 0.06), transparent 45%),
+        var(--bg);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s var(--ease), opacity 0.2s var(--ease);
+    }
+    a:hover { color: var(--accent); }
+    .kicker a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .kicker a:hover { color: var(--accent-2); }
+
+    img { max-width: 100%; display: block; }
+
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 32px);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: var(--header-h);
+      border-bottom: 1px solid var(--border);
+      background: color-mix(in oklab, var(--bg) 82%, transparent);
+      backdrop-filter: blur(16px) saturate(1.2);
+    }
+
+    .nav {
+      max-width: var(--max);
+      margin: 0 auto;
+      height: 100%;
+      padding: 0 clamp(20px, 4vw, 32px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .brand:hover { color: var(--text); opacity: 0.9; }
+
+    .brand-mark {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.15rem 0.25rem;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+    }
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--border);
+    }
+
+    .theme-toggle {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      margin-left: 0.35rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .theme-toggle:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-2);
+    }
+
+    /* Typography */
+    .text-gradient {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin-bottom: 0.5rem;
+    }
+
+    section > h2, .section-title {
+      font-size: clamp(1.5rem, 2.5vw, 1.85rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0 0 1.75rem;
+      line-height: 1.2;
+    }
+
+    section {
+      padding: clamp(56px, 8vw, 88px) 0;
+      scroll-margin-top: calc(var(--header-h) + 12px);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: var(--font);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      border-radius: 11px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), opacity 0.2s;
+    }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #0ea5e9);
+      color: #041016;
+      box-shadow: 0 4px 24px rgba(56, 189, 248, 0.25);
+    }
+    .btn-primary:hover {
+      color: #041016;
+      box-shadow: 0 8px 32px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+    .btn-ghost:hover {
+      border-color: var(--border-hover);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: clamp(20px, 3vw, 28px);
+      box-shadow: var(--shadow);
+      transition: border-color 0.25s var(--ease), transform 0.25s var(--ease);
+    }
+    .card:hover { border-color: var(--border-hover); }
+
+    /* Hero */
+    .hero {
+      padding-top: clamp(48px, 10vw, 96px);
+      padding-bottom: clamp(32px, 6vw, 64px);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: clamp(28px, 5vw, 48px);
+      align-items: start;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.15rem, 5vw, 3.25rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      margin: 0 0 1.25rem;
+    }
+
+    .kicker {
+      color: var(--muted);
+      font-size: clamp(1rem, 1.35vw, 1.08rem);
+      line-height: 1.75;
+      max-width: 52ch;
+      margin: 0 0 1.75rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .hero-aside .card-head {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin-bottom: 1rem;
+    }
+
+    .hero-aside ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .hero-aside li {
+      position: relative;
+      padding-left: 1.1rem;
+      margin-bottom: 0.65rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .hero-aside li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* Grids */
+    .grid {
+      display: grid;
+      gap: 1.25rem;
+    }
+    .grid-projects {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .grid-skills {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .grid-highlights {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .grid-certs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cert-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.4rem;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+    }
+    .cert-card .muted {
+      font-size: 0.875rem;
+      margin: 0 0 0.85rem;
+    }
+
+    .project-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.6rem;
+      line-height: 1.35;
+    }
+    .project-card .muted {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 0 0 1rem;
+    }
+    .project-card .tag-row { margin-top: 0; margin-bottom: 1.1rem; }
+    .project-card .link-arrow {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .project-card .link-arrow:hover { color: var(--accent-2); }
+
+    .muted { color: var(--muted); }
+
+    .skill-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 0.65rem;
+      color: var(--text);
+    }
+    .skill-card p, .skill-card ul {
+      font-size: 0.875rem;
+      margin: 0;
+    }
+    .skill-card ul { padding-left: 1.1rem; }
+
+    .highlight-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.85rem;
+      line-height: 1.35;
+    }
+    .highlight-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.9rem;
+    }
+    .highlight-card li { margin-bottom: 0.45rem; }
+
+    /* Experience */
+    .timeline {
+      position: relative;
+      padding-left: 0;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      opacity: 0.35;
+      border-radius: 2px;
+    }
+
+    .tl-item {
+      position: relative;
+      padding-left: 2rem;
+      margin-bottom: 2.25rem;
+    }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 0 4px var(--bg);
+    }
+
+    .tl-item h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.02em;
+    }
+    .tl-item .meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0 0 0.75rem;
+    }
+    .tl-item p.muted { font-size: 0.9rem; margin: 0 0 0.65rem; }
+    .tl-item ul { margin: 0; padding-left: 1.1rem; font-size: 0.9rem; }
+
+    /* Contact */
+    .contact-card {
+      display: grid;
+      gap: 1.5rem;
+    }
+    .contact-lede {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin: 0;
+      max-width: 42ch;
+    }
+    .contact-lede strong { color: var(--text); }
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .contact-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .contact-chip:hover {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+      color: var(--text);
+    }
+    .contact-chip.action {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.78rem;
+    }
+
+    .contact-direct {
+      display: grid;
+      gap: 0.35rem;
+    }
+    .contact-direct-hint {
+      font-size: 0.8rem;
+      color: var(--muted-2);
+      margin: 0 0 0.35rem;
+    }
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 0.75rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .contact-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      width: 4.5rem;
+      flex-shrink: 0;
+    }
+    .contact-value {
+      flex: 1 1 12rem;
+      min-width: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.875rem;
+      padding: 0.5rem 0.7rem;
+      border-radius: 9px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      user-select: all;
+      cursor: text;
+      word-break: break-all;
+    }
+    .contact-value:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+    .copy-btn {
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.4rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .copy-btn:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: var(--surface-2);
+    }
+    .copy-btn:disabled {
+      opacity: 0.85;
+      cursor: default;
+    }
+
+    /* LeetCode */
+    .leetcode-chart-wrap {
+      position: relative;
+      height: 380px;
+      margin-top: 0.5rem;
+    }
+    .leetcode-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem 2rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 2.5rem 0 3rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .grid-projects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links a { padding: 0.4rem 0.5rem; font-size: 0.8rem; }
+      .grid-projects,
+      .grid-skills,
+      .grid-highlights,
+      .grid-certs { grid-template-columns: 1fr; }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
   </style>
 </head>
 <body>
+  <div class="bg-mesh" aria-hidden="true"></div>
 
   <header>
     <div class="nav">
-      <a href="/" class="brand" style="text-decoration: none; color: inherit;"><span class="brand-dot"></span> Umesh</a>
-      <nav class="stack">
+      <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"></span> Umesh Gaikwad</a>
+      <nav class="nav-links" aria-label="Primary">
         <a href="#projects">Projects</a>
         <a href="#skills">Skills</a>
         <a href="#highlights">Highlights</a>
         <a href="#experience">Experience</a>
+        <a href="#certifications">Certifications</a>
         <a href="#leetcode" hidden>LeetCode</a>
         <a href="#contact">Contact</a>
-        <button id="themeBtn" class="theme-toggle" title="Toggle theme">🌓</button>
+        <button type="button" id="themeBtn" class="theme-toggle" title="Toggle theme" aria-label="Toggle light and dark theme">◐</button>
       </nav>
     </div>
   </header>
 
   <main id="main" class="container">
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-inner">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-grid">
         <div>
-          <span class="pill">Loading...</span>
-          <h1>Hi, I'm <span style="background:linear-gradient(135deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">Loading...</span></h1>
-          <p class="kicker">Loading...</p>
-          <div class="stack">
-            <a class="btn" href="#projects">View Projects</a>
-            <a class="btn ghost" href="#contact">Contact</a>
+          <span class="pill">Loading…</span>
+          <h1 id="hero-heading">Hi, I'm <span class="text-gradient">Loading…</span></h1>
+          <p class="kicker">Loading…</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#projects">View projects</a>
+            <a class="btn btn-ghost" href="#contact">Get in touch</a>
           </div>
         </div>
+        <aside class="hero-aside">
         <div class="card">
-          <strong>Quick facts</strong>
-          <ul class="muted">
-            <li>Loading...</li>
+            <div class="card-head">At a glance</div>
+            <ul id="hero-facts">
+              <li>Loading…</li>
           </ul>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
-            <span class="tag">Loading...</span>
+            <div id="hero-tags" class="tag-row">
+              <span class="tag">Loading…</span>
+            </div>
           </div>
-        </div>
+        </aside>
       </div>
     </section>
 
-    <!-- Projects -->
-    <section id="projects">
-      <h2>Projects</h2>
-      <div class="grid grid-3">
-        <article class="card project">
-          <h3>Loading...</h3>
-          <p class="muted">Loading...</p>
-          <p><span class="tag">Loading...</span></p>
-          <a class="btn ghost" href="#">Loading...</a>
+    <section id="projects" aria-labelledby="projects-title">
+      <span class="section-label">Selected work</span>
+      <h2 id="projects-title" class="section-title">Projects</h2>
+      <div class="grid grid-projects" id="projects-grid">
+        <article class="card project-card">
+          <h3>Loading…</h3>
+          <p class="muted">Loading…</p>
+          <div class="tag-row"><span class="tag">…</span></div>
+          <a class="link-arrow" href="#">Loading →</a>
         </article>
       </div>
     </section>
 
-    <!-- Skills -->
-    <section id="skills">
-      <h2>Skills</h2>
-      <div class="grid grid-3">
-        <div class="card">
-          <h3>Loading...</h3>
-          <p class="muted">Loading...</p>
+    <section id="skills" aria-labelledby="skills-title">
+      <span class="section-label">Stack &amp; practice</span>
+      <h2 id="skills-title" class="section-title">Skills</h2>
+      <div class="grid grid-skills" id="skills-grid">
+        <div class="card skill-card">
+          <h3>Loading…</h3>
+          <p class="muted">Loading…</p>
         </div>
       </div>
     </section>
 
-    <!-- Highlights -->
-    <section id="highlights">
-      <h2>Highlights</h2>
-      <div class="grid grid-2">
-        <div class="card">
-          <h3>Loading...</h3>
+    <section id="highlights" aria-labelledby="highlights-title">
+      <span class="section-label">Impact</span>
+      <h2 id="highlights-title" class="section-title">Highlights</h2>
+      <div class="grid grid-highlights" id="highlights-grid">
+        <div class="card highlight-card">
+          <h3>Loading…</h3>
           <ul class="muted">
-            <li>Loading...</li>
+            <li>Loading…</li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- Experience -->
-    <section id="experience">
-      <h2>Experience</h2>
-      <div class="timeline">
+    <section id="experience" aria-labelledby="experience-title">
+      <span class="section-label">Background</span>
+      <h2 id="experience-title" class="section-title">Experience</h2>
+      <div class="timeline" id="experience-timeline">
         <div class="tl-item">
-          <h3>Loading...</h3>
-          <p class="muted">Loading...</p>
-          <p class="muted">Loading...</p>
+          <h3>Loading…</h3>
+          <p class="meta muted">Loading…</p>
+          <p class="muted">Loading…</p>
         </div>
       </div>
     </section>
 
-    <!-- LeetCode: remove `hidden` below and set ENABLE_LEETCODE in data-loader.js -->
-    <section id="leetcode" hidden>
-      <h2>LeetCode Progress</h2>
-      <div class="card">
-        <div style="margin-bottom: 1rem;">
-          <p class="muted">Tracking my LeetCode ranking over time. Updated daily.</p>
-          <p class="muted">Profile: <a href="https://leetcode.com/u/umeshg17/" target="_blank">@umeshg17</a></p>
+    <section id="certifications" aria-labelledby="certifications-title">
+      <span class="section-label">Credentials</span>
+      <h2 id="certifications-title" class="section-title">Certifications</h2>
+      <div class="grid grid-certs" id="certifications-grid">
+        <div class="card cert-card">
+          <h3>Loading…</h3>
+          <p class="muted">Loading…</p>
+          <a class="link-arrow" href="#" target="_blank" rel="noopener noreferrer">Verify on Credly →</a>
         </div>
-        <div style="position: relative; height: 400px;">
+      </div>
+    </section>
+
+    <section id="leetcode" hidden aria-labelledby="leetcode-title">
+      <span class="section-label">Practice</span>
+      <h2 id="leetcode-title" class="section-title">LeetCode progress</h2>
+      <div class="card">
+        <p class="muted">Tracking ranking over time. Updated daily.</p>
+        <p class="muted">Profile: <a href="https://leetcode.com/u/umeshg17/" target="_blank" rel="noopener">@umeshg17</a></p>
+        <div class="leetcode-chart-wrap">
           <canvas id="leetcodeChart"></canvas>
         </div>
-        <div id="leetcodeStats" style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-          <div class="muted">Current Rank: <strong id="currentRank">-</strong></div>
-          <div class="muted">Best Rank: <strong id="bestRank">-</strong></div>
-          <div class="muted">Days Tracked: <strong id="daysTracked">-</strong></div>
+        <div id="leetcodeStats" class="leetcode-stats">
+          <div class="muted">Current rank: <strong id="currentRank">—</strong></div>
+          <div class="muted">Best rank: <strong id="bestRank">—</strong></div>
+          <div class="muted">Days tracked: <strong id="daysTracked">—</strong></div>
         </div>
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact">
-      <h2>Contact</h2>
-      <div class="card">
-        <p>Loading...</p>
+    <section id="contact" aria-labelledby="contact-title">
+      <span class="section-label">Connect</span>
+      <h2 id="contact-title" class="section-title">Contact</h2>
+      <div class="card contact-card" id="contact-inner">
+        <p class="muted">Loading…</p>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="container">© <span id="year"></span> <span id="footer-name">Loading...</span> — <span id="footer-message">Loading...</span></div>
+    <div class="container">
+      © <span id="year"></span> <span id="footer-name">…</span> — <span id="footer-message">…</span>
+    </div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="data-loader.js"></script>
   <script>
-    // Year
     document.getElementById('year').textContent = new Date().getFullYear();
-    // Theme
     const themeBtn = document.getElementById('themeBtn');
     const saved = localStorage.getItem('theme');
-    if(saved === 'light') document.body.classList.add('light');
+    if (saved === 'light') document.body.classList.add('light');
     themeBtn.addEventListener('click', () => {
       document.body.classList.toggle('light');
       localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
     });
-    // Smooth scroll for anchor links
+
+    const headerOffset = () => parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'), 10) + 12;
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-        if (href === '#' || href === '#') return;
+        if (!href || href === '#') return;
         const target = document.querySelector(href);
         if (target) {
           e.preventDefault();
-          // Update URL hash first
           window.location.hash = href;
-          // Then scroll smoothly
-          const headerOffset = 80;
-          const elementPosition = target.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
+          const y = target.getBoundingClientRect().top + window.pageYOffset - headerOffset();
+          window.scrollTo({ top: y, behavior: 'smooth' });
         }
       });
     });
 
-    // Function to scroll to hash after content is loaded
     function scrollToHash() {
       const hash = window.location.hash;
-      if (hash) {
+      if (!hash) return;
         const target = document.querySelector(hash);
-        if (target) {
-          // Wait a bit to ensure all content is rendered
+      if (!target) return;
           setTimeout(() => {
-            const headerOffset = 80;
-            const elementPosition = target.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
-          }, 100);
-        }
-      }
+        const y = target.getBoundingClientRect().top + window.pageYOffset - headerOffset();
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 80);
     }
 
-    // Handle hash change events
-    window.addEventListener('hashchange', () => {
-      scrollToHash();
-    });
+    window.addEventListener('hashchange', scrollToHash);
+    window.addEventListener('load', scrollToHash);
 
-    // Scroll to hash on page load (will be called after content loads)
-    window.addEventListener('load', () => {
-      scrollToHash();
-    });
-
-    // Quick section jump with '/'
-    const map = { projects:'#projects', skills:'#skills', experience:'#experience', contact:'#contact' };
+    const map = { projects: '#projects', skills: '#skills', highlights: '#highlights', experience: '#experience', certifications: '#certifications', contact: '#contact' };
     let buffer = '';
-    window.addEventListener('keydown', (e)=>{
-      if(e.key === '/') { e.preventDefault(); buffer=''; return; }
-      if(e.key.length === 1) buffer += e.key.toLowerCase();
-      for(const k in map){ if(buffer.endsWith(k)) { location.hash = map[k]; buffer=''; }}
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/') { e.preventDefault(); buffer = ''; return; }
+      if (e.key.length === 1) buffer += e.key.toLowerCase();
+      for (const k in map) {
+        if (buffer.endsWith(k)) { location.hash = map[k]; buffer = ''; }
+      }
     });
   </script>
 </body>

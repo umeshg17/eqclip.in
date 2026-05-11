@@ -2,9 +2,9 @@
 personal:
   name: "Umesh Gaikwad"
   title: "🏗️ Infrastructure • ☸️ Kubernetes • 🚀 DevOps • ☁️ Cloud"
-  description: "M.Tech (CSE) from IISc Bangalore with experience at Observe.AI, Amagi, and Exadatum. I build reliable, cost-efficient cloud infrastructure with Kubernetes and GitOps, bringing a collaborative yet independent approach to solving platform challenges."
+  description: "M.Tech (CSA) from IISc Bangalore with experience at Observe.AI, Amagi, and Exadatum. I build reliable, cost-efficient cloud infrastructure with Kubernetes and GitOps, bringing a collaborative yet independent approach to solving platform challenges."
   quick_facts:
-    - "M.Tech (CSE), IISc Bangalore — 2023"
+    - "M.Tech (CSA), IISc Bangalore — 2023"
     - "DevOps/Platform Engineer (K8s, Helm, Jenkins, ArgoCD)"
     - "Hands-on Cloud: AWS (EKS, storage, compute, security), GCP (DataProc/GKE)"
     - "Big Data & IaC: Spark, Kafka, Pulumi"
@@ -43,7 +43,30 @@ footer:
   name: "Umesh Gaikwad"
   message: "Built simple, reliable, and efficient (just like good infrastructure)"
 
+certifications:
+  - title: "Google IT Automation with Python"
+    subtitle: "Coursera Professional Certificate"
+    url: "https://www.credly.com/badges/75d9811c-198b-4dc5-a41d-dd3a6e6d9ee3/public_url"
+  - title: "Certified Kubernetes Administrator (CKA)"
+    subtitle: "CNCF / The Linux Foundation"
+    url: "https://www.credly.com/badges/5e298069-3cc7-4a4b-b30c-79a8ae8f624f/public_url"
+
 projects:
+  - title: "klabctl — Kubernetes lab (Multipass + kubeadm)"
+    description: "Production-like multi-node Kubernetes on Multipass VMs via kubeadm. CLI for create/destroy, HA-style topologies, and deep node-level practice (containerd, CNI, certs) without managed-cluster cost."
+    tags: ["Kubernetes", "kubeadm", "Multipass", "Bash"]
+    link: "https://github.com/SkaleKontrol/klabctl"
+    link_text: "GitHub →"
+  - title: "ECR + Bottlerocket — encrypted EBS snapshot with image pre-pull"
+    description: "Automate an encrypted EBS snapshot of a Bottlerocket data volume with container images pre-pulled via SSM and containerd—useful for faster EKS node bring-up."
+    tags: ["AWS", "EKS", "Bottlerocket", "EBS", "containerd", "SSM"]
+    link: "https://github.com/SkaleKontrol/ecr-bottlerocket-ebs-snapshot"
+    link_text: "GitHub →"
+  - title: "jenkins-k8s-agent-helm"
+    description: "Helm chart for deploying Jenkins inbound agents on Kubernetes with WebSocket support, IRSA, and optional Karpenter integration."
+    tags: ["Helm", "Jenkins", "Kubernetes", "WebSocket", "IRSA", "Karpenter"]
+    link: "https://github.com/SkaleKontrol/jenkins-k8s-agent-helm"
+    link_text: "GitHub →"
   - title: "GitOps Jenkins on EKS"
     description: "Helm-based Jenkins with Job DSL sidecar syncing, ScriptApproval auto-approver, ALB ingress, Okta SSO."
     tags: ["Helm", "EKS", "ALB", "Job DSL"]

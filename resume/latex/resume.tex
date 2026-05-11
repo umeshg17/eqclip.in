@@ -1,0 +1,142 @@
+\documentclass{resume} % Use the custom resume.cls style
+
+\usepackage[left=0.4 in,top=0.4in,right=0.4 in,bottom=0.4in]{geometry} % Document margins
+\newcommand{\tab}[1]{\hspace{.2667\textwidth}\rlap{#1}} 
+\newcommand{\itab}[1]{\hspace{0em}\rlap{#1}}
+\name{Umesh Gaikwad} % Your name
+% You can merge both of these into a single line, if you do not have a website.
+\address{+91 9766185211 \\ Bengaluru, Karnataka, IN}
+\address{\href{mailto:gaikwadumesh123@gmail.com}{gaikwadumesh123@gmail.com} \\ \href{https://www.linkedin.com/in/umeshg17/}{linkedin.com/in/umeshg17} \\ \href{https://umesh.skalekontrol.com}{umesh.skalekontrol.com}}
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	OBJECTIVE
+%----------------------------------------------------------------------------------------
+
+\begin{rSection}{OBJECTIVE}
+
+{Platform-leaning DevOps engineer (M.Tech CSA, IISc) with production work on AWS EKS, Kubernetes, GitOps, and CI/CD. Comfortable owning reliability, cost, and delivery automation with clear hand-offs to product teams. Targeting infrastructure, platform, or cloud engineering roles.}
+
+\end{rSection}
+%----------------------------------------------------------------------------------------
+%	EDUCATION SECTION
+%----------------------------------------------------------------------------------------
+
+
+
+%----------------------------------------------------------------------------------------
+% TECHINICAL STRENGTHS	
+%----------------------------------------------------------------------------------------
+\begin{rSection}{SKILLS}
+
+\begin{tabular}{ @{} >{\bfseries}l @{\hspace{6ex}} l }
+Programming & Python, Bash; C (coursework) \\
+Containers & Docker; Kubernetes (CKA); Helm \\
+Cloud & AWS (EKS, EC2, load balancing, IAM for workloads); GCP exposure (GKE, Dataproc) \\
+IaC & Pulumi (primary at prior role), Terraform (modules / add-ons) \\
+CI/CD & Jenkins, Bitbucket Pipelines, Argo CD, Git-style infra changes \\
+Security & Kubernetes RBAC, workload identity patterns, image scanning in pipelines \\
+Automation & REST/CLI tooling, Liquibase in pipelines, Slack-based deploy helpers \\
+Observability & Metrics, logs, alerting; cost visibility (e.g., Kubecost-style dashboards) \\
+Data (prior role) & Kafka, Spark \\
+Learning & OpenShift (exploring)
+\end{tabular}
+
+\end{rSection}
+
+\begin{rSection}{EXPERIENCE}
+
+\textbf{DevOps / Platform Engineer} \hfill Sep 2024 -- present\\
+Observe.AI \hfill \textit{Bengaluru, Karnataka, IN}
+
+\begin{itemize}
+    \itemsep -3pt {} 
+    \item Contributed Terraform modules for repeatable cluster add-ons and baseline environment wiring.
+    \item Built a Liquibase proof-of-concept in Bitbucket pipelines (PR checks, gated apply) to tighten database change flow before wider adoption.
+    \item Tuned Kubernetes alerts and configuration to reduce noisy pages and shorten time-to-detect for real service issues.
+    \item Scripted Hevo pipeline provisioning to replace repetitive UI setup and keep non-prod environments aligned.
+    \item Measured $\sim$60\% faster pod startup (representative workloads) after validating Bottlerocket nodes with EBS-backed image prefetch from ECR; documented assumptions and rollback path.
+\end{itemize}
+
+
+ 
+\textbf{DevOps Engineer} \hfill Aug 2023 -- Sep 2024\\
+Amagi Media Labs \hfill \textit{Bengaluru, Karnataka, IN}
+
+\begin{itemize}
+    \itemsep -3pt {} 
+    \item Helped extend GitOps-style delivery with Argo CD, adding image scan and policy checks before promotion to selected environments.
+    \item Participated in Kubernetes upgrades and add-on rollouts with staged applies, health checks, and documented rollback steps.
+    \item Deployed AWS Load Balancer Controller and ingress objects for predictable routing to internal services.
+    \item Built Slack-backed tooling for guarded, on-demand deploys with basic audit trail (who/when/what).
+    \item Added dashboards and alerts around PRs, releases, and spend together with existing SRE/on-call practices.
+    \item Used Pulumi for infrastructure changes where the platform team had standardized stacks.
+\end{itemize}
+
+
+
+\textbf{Big Data Engineer} \hfill July 2019 -- Apr 2020\\
+Exadatum \hfill \textit{Pune, Maharashtra, IN}
+ \begin{itemize}
+    \itemsep -3pt {} 
+     \item Built a Docker-based Spark + Livy setup for notebook-driven jobs so the team could iterate before paying for Dataproc clusters.
+     \item Consolidated related Java modules and added JUnit coverage around Kafka $\rightarrow$ GCS ingestion paths.
+ \end{itemize}
+
+
+\end{rSection} 
+
+%----------------------------------------------------------------------------------------
+%	WORK EXPERIENCE SECTION
+%----------------------------------------------------------------------------------------
+
+% \begin{rSection}{PROJECTS}
+% \vspace{-1.25em}
+% \item \textbf{Hiring Search Tool.} {Built a tool to search for Hiring Managers and Recruiters by using ReactJS, NodeJS, Firebase and boolean queries. Over 25000 people have used it so far, with 5000+ queries being saved and shared, and search results even better than LinkedIn! \href{https://hiring-search.careerflow.ai/}{(Try it here)}}
+% \item \textbf{Short Project Title.} {Build a project that does something and had quantified success using A, B, and C. This project's description spans two lines and also won an award.}
+% \item \textbf{Short Project Title.} {Build a project that does something and had quantified success using A, B, and C. This project's description spans two lines and also won an award.}
+% \end{rSection} 
+
+%----------------------------------------------------------------------------------------
+% \begin{rSection}{Extra-Curricular Activities} 
+% \begin{itemize}
+%     \item	Sample extracurricular bullet (edit or delete this section). 
+%     \item	Sample bullet point.
+% \end{itemize}
+
+
+% \end{rSection}
+
+%----------------------------------------------------------------------------------------
+\begin{rSection}{Certifications \& Achievements} 
+\begin{itemize}
+    \item \textbf{GATE 2021}: Top 2\% among $\sim$200k candidates (GATE CS paper); admitted to IISc Bangalore (M.Tech CSA).
+    \item \href{https://www.credly.com/badges/75d9811c-198b-4dc5-a41d-dd3a6e6d9ee3/public_url}{Google IT Automation with Python – Coursera Professional Certificate}
+    \item \href{https://www.credly.com/badges/5e298069-3cc7-4a4b-b30c-79a8ae8f624f/public_url}{Certified Kubernetes Administrator (CKA)}
+\end{itemize}
+
+\end{rSection}
+
+\begin{rSection}{Education}
+
+{\bf Master of Technology -- Computer Science and Automation}, IISc Bangalore \hfill { July 2023}
+\begin{itemize}
+    \item Relevant coursework: Network and Distributed Systems Security, Principles of Distributed Software, Scalable Systems for Data Science.
+    \item Coursework and readings on distributed systems, fault tolerance, storage, and messaging at scale.
+    \item Teaching Assistant for \textit{Computational Geometry}: Evaluated assignments and provided guidance to over 100 UG, M.Tech, and Ph.D. students, addressing assignment-related queries and ensuring timely feedback.
+\end{itemize}
+
+{\bf Bachelor of Engineering - Computer Science}, MGM's COE Nanded \hfill {July 2019}
+%Minor in Linguistics \smallskip \\
+%Member of Eta Kappa Nu \\
+%Member of Upsilon Pi Epsilon \\
+\begin{itemize}
+    \item Relevant coursework: Data Structures and Algorithms, Operating Systems, Computer Networks, Database Management Systems.
+    \item C and Python used across coursework, labs, and small projects.
+\end{itemize}
+
+\end{rSection}
+
+\end{document}
+

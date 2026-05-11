@@ -19,6 +19,10 @@ portfolio/
 ├── index.html                    # Main portfolio HTML file
 ├── data.yaml                     # ✅ EDIT HERE - All portfolio content (YAML format)
 ├── data-loader.js                # JavaScript to load YAML data
+├── scripts/
+│   ├── resume-preview.sh         # LaTeX resume: install TeX if needed, then live PDF preview
+│   └── resume-build-docker.sh    # One-shot PDF build via Docker (wrapper)
+├── resume/latex/                 # LaTeX resume (see resume/latex/README.md)
 ├── README.md                     # Main documentation (this file)
 └── .github/workflows/
     ├── deploy-pages.yml         # GitHub Pages deployment workflow
@@ -103,11 +107,33 @@ To add a new section:
 2. Add the HTML structure to `index.html` (with loading placeholders)
 3. Add the population logic to `data-loader.js`
 
-## Local Development
+## Run locally
 
-1. Clone or download the files
-2. Open `index.html` in a web browser (or serve with `python3 -m http.server 8000`)
-3. The page will automatically load content from `data.yaml`
+The site loads `data.yaml` with `fetch()`, so you need a **local HTTP server** (opening `index.html` as a `file://` URL will not load the YAML in most browsers).
+
+From the repository root:
+
+```bash
+cd portfolio   # or your clone path
+
+# Python 3 (stdlib; no install)
+python3 -m http.server 8080
+```
+
+Then open **http://127.0.0.1:8080/** (or **http://localhost:8080/**) in your browser. Edit `data.yaml` and refresh to see changes.
+
+Other options, if you prefer:
+
+```bash
+npx --yes serve -l 8080 .
+# or: npx --yes http-server -p 8080 .
+```
+
+Stop the server with **Ctrl+C** in that terminal.
+
+## LaTeX resume (PDF)
+
+The CV under `resume/latex/` is built with `pdflatex` / `latexmk`. From the repo root, **`./scripts/resume-preview.sh`** will install TeX on Ubuntu/Debian via **sudo apt** if it is missing, then start a **live preview** (rebuild on save); if apt is not possible, it falls back to **Docker**. For a **one-shot PDF build without host TeX**, use **`./scripts/resume-build-docker.sh`** (same as `resume-preview.sh --docker --once`). Details and flags (`--docker`, `--once`): **[resume/latex/README.md](resume/latex/README.md)**.
 
 ## Quick Updates
 
