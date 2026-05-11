@@ -52,11 +52,12 @@ Observe.AI \hfill \textit{Bengaluru, Karnataka, IN}
 
 \begin{itemize}
     \itemsep -3pt {} 
-    \item Contributed Terraform modules for repeatable cluster add-ons and baseline environment wiring.
-    \item Built a Liquibase proof-of-concept in Bitbucket pipelines (PR checks, gated apply) to tighten database change flow before wider adoption.
-    \item Tuned Kubernetes alerts and configuration to reduce noisy pages and shorten time-to-detect for real service issues.
-    \item Scripted Hevo pipeline provisioning to replace repetitive UI setup and keep non-prod environments aligned.
-    \item Measured $\sim$60\% faster pod startup (representative workloads) after validating Bottlerocket nodes with EBS-backed image prefetch from ECR; documented assumptions and rollback path.
+    \item Managed 15+ multi-region EKS production clusters with 100+ microservices --- node pool isolation, Karpenter autoscaling, PDBs, and resource right-sizing.
+    \item Delivered 175+ production infrastructure changes with zero downtime via structured change management process.
+    \item Built a Jira-gated Terraform plan/apply pipeline with AI-powered risk review, S3 plan storage, Slack notifications, and auto-cancellation --- changes applied only after approval reaches deployment window.
+    \item Owned Jenkins CI/CD infrastructure on Kubernetes --- multi-EKS agents, ALB ingress, Okta SSO, observability integrations, and pipeline optimization for faster builds.
+    \item Built an AI-powered Slack bot for instant AWS resource lookups during incident debugging --- natural-language queries across multiple accounts using LangGraph agents and MCP.
+    \item Designed an approval-based Snowflake change management workflow using Liquibase with PR validation, CODEOWNERS enforcement, and CI/CD pipelines.
 \end{itemize}
 
 

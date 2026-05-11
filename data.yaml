@@ -73,11 +73,23 @@ projects:
     link: "#"
     link_text: "Repo →"
   
-  - title: "Liquibase CI/CD PoC"
-    description: "PR validation (syntax & format), CODEOWNERS enforcement, Bitbucket pipelines to apply DB changes safely."
-    tags: ["Liquibase", "Bitbucket", "Postgres"]
+  - title: "Approval-Gated Infrastructure Deployment Pipeline"
+    description: "Built a Jira-gated Terraform plan/apply pipeline with structured change management: plans are generated per environment, reviewed by Gemini AI for risk, uploaded to S3, and applied only after approval reaches 'Deployment Window' status. Includes Slack notifications, auto-cancellation on rejection, and full audit trail."
+    tags: ["Terraform", "Jenkins", "Jira", "Gemini AI", "S3", "Slack", "Change Management"]
     link: "#"
     link_text: "Case Study →"
+
+  - title: "Liquibase Change Management for Snowflake"
+    description: "Built an approval-based change management workflow for Snowflake using Liquibase — enabling tracked, auditable schema and data changes with PR validation, CODEOWNERS enforcement, and CI/CD pipelines."
+    tags: ["Liquibase", "Snowflake", "CI/CD", "Change Management", "Bitbucket"]
+    link: "#"
+    link_text: "Case Study →"
+
+  - title: "AI-Powered AWS Asset Lookup via Slack"
+    description: "Built a Slack bot for instant AWS resource lookups during incident debugging — ask natural-language questions and get real-time answers across multiple accounts using LangGraph agents and MCP (AWS Cloud Control API), eliminating console context-switching."
+    tags: ["LangGraph", "MCP", "AWS", "Slack Bot", "FastAPI", "LiteLLM", "Python"]
+    link: "#"
+    link_text: "Details →"
 
 skills:
   - category: "Cloud Platforms"
@@ -135,8 +147,7 @@ highlights:
   
   - title: "🤝 Cross‑Team Contributions"
     items:
-      - "SME for Kafka & SQS — guidance, tooling, and process improvements."
-      - "Assisted with Karpenter & CoreDNS alert setup and scaling optimizations."
+      - "Go-to person for CI/CD across engineering teams — pipeline design, build optimization, agent setup, and troubleshooting."
       - "Partnered with teams to debug pod scheduling & optimize resource allocation."
 
 experience:
@@ -144,8 +155,14 @@ experience:
     role: "DevOps/Platform"
     period: "Sep 11, 2024 – Present"
     location: "Bengaluru"
-    description: "Cloud infrastructure & CI/CD for conversational AI products (high-level summary)."
-  
+    items:
+      - "Managed 15+ multi-region EKS production clusters with 100+ microservices — handling node pool isolation, Karpenter autoscaling, PDBs, and resource right-sizing."
+      - "Delivered 175+ production infrastructure changes with zero downtime via structured change management process."
+      - "Built an AI-powered Slack bot for instant AWS resource lookups during incident debugging — natural-language queries across multiple accounts using LangGraph agents and MCP, eliminating console context-switching."
+      - "Built a Jira-gated Terraform plan/apply pipeline with AI-powered risk review, S3 plan storage, Slack notifications, and auto-cancellation — changes applied only after approval reaches deployment window."
+      - "Owned Jenkins CI/CD infrastructure on Kubernetes — multi-EKS agents, ALB ingress, Okta SSO, observability integrations, and pipeline optimization for faster builds."
+      - "Designed an approval-based Snowflake change management workflow using Liquibase with PR validation, CODEOWNERS enforcement, and CI/CD pipelines for auditable schema changes."
+
   - company: "Amagi Media Labs"
     role: "DevOps Engineer"
     period: "Aug 2023 – Sep 2024"
@@ -154,7 +171,6 @@ experience:
       - "Implemented GitOps-based deployments across multiple environments."
       - "Built CI/CD with automated testing & container security scanning."
       - "Managed infra updates, node transitions & efficient node management."
-      - "Cost optimization via resource tagging & DB migration strategies."
       - "Improved routing via Load Balancer Controller & Ingress configs."
       - "Built Slack-bot for self-serve deploys & deployment automation."
       - "Monitoring & alerting for PRs, deployments, and costs."
