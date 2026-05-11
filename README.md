@@ -15,7 +15,7 @@ A clean, fast, and maintainable portfolio website built with vanilla HTML, CSS, 
 ## File Structure
 
 ```
-eqclip.in/
+portfolio/
 ├── index.html                    # Main portfolio HTML file
 ├── data.yaml                     # ✅ EDIT HERE - All portfolio content (YAML format)
 ├── data-loader.js                # JavaScript to load YAML data
@@ -124,18 +124,22 @@ The portfolio can be deployed to any static hosting service:
 
 Just upload all files and the portfolio will work immediately.
 
-### GitHub Pages and custom domain (`umesh.skalekontrol.com`)
+### GitHub Pages — portfolio at `umesh.skalekontrol.com`
 
-This repo uses GitHub Actions (`.github/workflows/deploy-pages.yml`) to publish to GitHub Pages. The [`CNAME`](CNAME) file tells GitHub which hostname to serve.
+| Item | Value |
+|------|--------|
+| GitHub repo | `umeshg17/portfolio` (rename the repo on GitHub to **portfolio** if it is still named something else) |
+| Public URL | `https://umesh.skalekontrol.com` |
+| DNS | **CNAME** — host `umesh` → target `umeshg17.github.io` |
 
-1. **Repository** — Settings → Pages: Source must be **GitHub Actions** (not “Deploy from a branch”).
-2. **Custom domain** — Settings → Pages → Custom domain: enter `umesh.skalekontrol.com` and save (GitHub reads `CNAME` from the site after deploy; you can also set it here).
-3. **DNS (at `skalekontrol.com`)** — Add a **CNAME** record:
-   - **Name / host:** `umesh` (or `umesh.skalekontrol.com`, depending on your DNS provider)
-   - **Target / points to:** `umeshg17.github.io`
-4. Wait for DNS to propagate, then enable **Enforce HTTPS** in Pages settings once the certificate is issued.
+This repo uses GitHub Actions (`.github/workflows/deploy-pages.yml`) to publish to GitHub Pages. The [`CNAME`](CNAME) file must contain `umesh.skalekontrol.com` (one line, no `https://`).
 
-Remove or update any old hostname (for example `umesh.eqclip.in`) so it does not conflict with the new site.
+1. **Repository** — Settings → General → Repository name: use **portfolio** if you want this layout. Settings → Pages: source **GitHub Actions**.
+2. **Custom domain** — Settings → Pages → Custom domain: `umesh.skalekontrol.com` (matches `CNAME`).
+3. **DNS** — At `skalekontrol.com`, create **CNAME** `umesh` → `umeshg17.github.io`.
+4. After DNS propagates, turn on **Enforce HTTPS** in Pages settings.
+
+If you rename the repo on GitHub, update your local clone: `git remote set-url origin git@github.com:umeshg17/portfolio.git` (or the `https://` equivalent).
 
 ## Browser Compatibility
 
