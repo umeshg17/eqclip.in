@@ -6,32 +6,26 @@ personal:
   name: "Umesh Gaikwad"
   title: "🏗️ Infrastructure • ☸️ Kubernetes • 🚀 DevOps • ☁️ Cloud"
   description: "M.Tech (CSA) from IISc Bangalore with experience at Observe.AI, Amagi, and Exadatum. I build reliable, cost-efficient cloud infrastructure with Kubernetes and GitOps, bringing a collaborative yet independent approach to solving platform challenges."
-  # Hero facts: same bar as skills—only claims backed elsewhere on this page or the résumé.
+  # Hero facts: short lines; detail lives in Skills + Experience.
   quick_facts:
-    - "M.Tech (CSA), IISc Bangalore (2023): distributed systems and algorithms depth; TA for large cohorts (algorithms and computational geometry)."
-    - "Observe.AI — multi-region EKS for 100+ microservices; Karpenter, PDBs, and capacity tuning; 175+ production infra changes shipped with zero downtime under structured change management."
-    - "Observe.AI: owns Jenkins on Kubernetes (multi-cluster agents, ALB ingress, SSO and observability hooks, build tuning). Amagi: Argo CD promotions with scan/policy gates; Pulumi on standardized platform stacks."
-    - "Production AWS around EKS, networking, storage, and IAM; earlier GCP (GKE, Dataproc) from data-heavy roles. Kafka and Spark when workloads sit on the infra you operate."
-    - "Ships governed change: Jira-linked Terraform (stored plans, Slack signals, AI-assisted risk review, safe cancellation); Liquibase on Snowflake with PR checks and CODEOWNERS for auditable schema."
-    - "Python, Bash, boto3; Slack workflows for guarded deploys and incident-time AWS lookup (e.g. LangGraph + MCP) so teams spend less time context-switching in the console."
-    - "Open to platform, cloud, and infrastructure engineering roles (IC track)."
-  # Hero tags: strongest signal first (K8s → cloud → delivery → rest)
+    - "M.Tech (CSA), IISc (2023); TA — algorithms & computational geometry."
+    - "Observe.AI: multi-region EKS (100+ microservices); 175+ infra changes, zero downtime."
+    - "Owns Jenkins on Kubernetes; Argo CD + Pulumi (Amagi & Observe)."
+    - "AWS (EKS stack, networking, IAM); prior GCP; Kafka & Spark next to infra."
+    - "Jira-gated Terraform; Liquibase + Snowflake with PR/CODEOWNERS gates."
+    - "Python, Bash, boto3; Slack ops helpers (LangGraph/MCP for AWS lookups)."
+    - "Open to platform, cloud, or infrastructure IC roles."
+  # Hero tags: lean chip row (rest of stack is under Skills).
   skills_tags:
     - "Kubernetes"
     - "AWS"
     - "Helm"
     - "Jenkins"
+    - "Terraform"
     - "ArgoCD"
     - "Pulumi"
-    - "GCP"
-    - "Spark"
-    - "Kafka"
-    - "Python"
-    - "Bash"
-    - "CI/CD"
     - "GitOps"
-    - "Infra"
-    - "Cloud"
+    - "Python"
 
 auto_links:
   "Observe.AI": "https://observe.ai"
