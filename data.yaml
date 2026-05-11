@@ -1,24 +1,28 @@
 # Portfolio Configuration for Umesh Gaikwad
+# LaTeX résumé (resume/latex/resume.tex): keep roles and bullets aligned with `experience`,
+# `projects` (use real GitHub URLs where listed), and `highlights` for extra Observe/Amagi detail.
+
 personal:
   name: "Umesh Gaikwad"
   title: "🏗️ Infrastructure • ☸️ Kubernetes • 🚀 DevOps • ☁️ Cloud"
   description: "M.Tech (CSA) from IISc Bangalore with experience at Observe.AI, Amagi, and Exadatum. I build reliable, cost-efficient cloud infrastructure with Kubernetes and GitOps, bringing a collaborative yet independent approach to solving platform challenges."
   quick_facts:
-    - "M.Tech (CSA), IISc Bangalore — 2023"
-    - "DevOps/Platform Engineer (K8s, Helm, Jenkins, ArgoCD)"
-    - "Hands-on Cloud: AWS (EKS, storage, compute, security), GCP (DataProc/GKE)"
-    - "Big Data & IaC: Spark, Kafka, Pulumi"
-    - "Focus Areas: GitOps, cost efficiency, incident response, reliability"
-    - "Languages & Tools: Python, Bash, CI/CD pipelines"
-    - "Open to Roles: Infra, Platform, and Cloud Engineering"
+    - "M.Tech (CSA), IISc Bangalore — 2023; strong systems and analytical foundation."
+    - "Platform/DevOps engineer with production ownership across Kubernetes, Helm, Jenkins, and ArgoCD."
+    - "AWS in production: EKS, networking, storage, IAM, and security patterns; GCP exposure (GKE, Dataproc)."
+    - "Comfortable where data meets infra: Spark and Kafka in real workloads; IaC with Pulumi."
+    - "Prioritizes GitOps delivery, cost-aware design, reliability, and calm, well-documented incident response."
+    - "Ships automation in Python and Bash; designs CI/CD that other teams can run without hand-holding."
+    - "Open to platform, cloud, and infrastructure engineering roles (IC track)."
+  # Hero tags: strongest signal first (K8s → cloud → delivery → rest)
   skills_tags:
     - "Kubernetes"
     - "AWS"
-    - "GCP"
     - "Helm"
     - "Jenkins"
     - "ArgoCD"
     - "Pulumi"
+    - "GCP"
     - "Spark"
     - "Kafka"
     - "Python"
@@ -38,6 +42,7 @@ contact:
   phone_primary: "+91 9766185211"
   linkedin: "https://www.linkedin.com/in/umeshg17/"
   hackerrank: "https://www.hackerrank.com/profile/umeshg17"
+  portfolio: "https://umesh.skalekontrol.com"
 
 footer:
   name: "Umesh Gaikwad"
@@ -51,68 +56,62 @@ certifications:
     subtitle: "CNCF / The Linux Foundation"
     url: "https://www.credly.com/badges/5e298069-3cc7-4a4b-b30c-79a8ae8f624f/public_url"
 
+# Projects: flagship case studies first (AI ops assist → gated infra), then public repos, then remaining work
 projects:
-  - title: "klabctl — Kubernetes lab (Multipass + kubeadm)"
-    description: "Production-like multi-node Kubernetes on Multipass VMs via kubeadm. CLI for create/destroy, HA-style topologies, and deep node-level practice (containerd, CNI, certs) without managed-cluster cost."
-    tags: ["Kubernetes", "kubeadm", "Multipass", "Bash"]
-    link: "https://github.com/SkaleKontrol/klabctl"
+  - title: "AI-Powered AWS Asset Lookup via Slack"
+    description: "Built a Slack bot for instant AWS resource lookups during incident debugging — ask natural-language questions and get real-time answers across multiple accounts using LangGraph agents and MCP (AWS Cloud Control API), eliminating console context-switching."
+    tags: ["LangGraph", "MCP", "AWS", "Slack Bot", "FastAPI", "LiteLLM", "Python"]
+
+  - title: "Approval-Gated Infrastructure Deployment Pipeline"
+    description: "Built a Jira-gated Terraform plan/apply pipeline with structured change management: plans are generated per environment, reviewed by Gemini AI for risk, uploaded to S3, and applied only after approval reaches 'Deployment Window' status. Includes Slack notifications, auto-cancellation on rejection, and full audit trail."
+    tags: ["Terraform", "Jenkins", "Jira", "Gemini AI", "S3", "Slack", "Change Management"]
+
+  - title: "jenkins-k8s-agent-helm"
+    description: "Helm chart for deploying Jenkins inbound agents on Kubernetes with WebSocket support, IRSA, and optional Karpenter integration."
+    tags: ["Helm", "Jenkins", "Kubernetes", "WebSocket", "IRSA", "Karpenter"]
+    link: "https://github.com/SkaleKontrol/jenkins-k8s-agent-helm"
     link_text: "GitHub →"
   - title: "ECR + Bottlerocket — encrypted EBS snapshot with image pre-pull"
     description: "Automate an encrypted EBS snapshot of a Bottlerocket data volume with container images pre-pulled via SSM and containerd—useful for faster EKS node bring-up."
     tags: ["AWS", "EKS", "Bottlerocket", "EBS", "containerd", "SSM"]
     link: "https://github.com/SkaleKontrol/ecr-bottlerocket-ebs-snapshot"
     link_text: "GitHub →"
-  - title: "jenkins-k8s-agent-helm"
-    description: "Helm chart for deploying Jenkins inbound agents on Kubernetes with WebSocket support, IRSA, and optional Karpenter integration."
-    tags: ["Helm", "Jenkins", "Kubernetes", "WebSocket", "IRSA", "Karpenter"]
-    link: "https://github.com/SkaleKontrol/jenkins-k8s-agent-helm"
+  - title: "klabctl — Kubernetes lab (Multipass + kubeadm)"
+    description: "Production-like multi-node Kubernetes on Multipass VMs via kubeadm. CLI for create/destroy, HA-style topologies, and deep node-level practice (containerd, CNI, certs) without managed-cluster cost."
+    tags: ["Kubernetes", "kubeadm", "Multipass", "Bash"]
+    link: "https://github.com/SkaleKontrol/klabctl"
     link_text: "GitHub →"
   - title: "Setting up Jenkins"
     description: "Built and customized an organization-specific Jenkins platform on Kubernetes with multi-EKS agents, ALB ingress, Okta SSO, and observability integration; used extensively for CI/CD and infrastructure utility workflows."
     tags: ["Jenkins", "Kubernetes", "Helm", "EKS", "ALB", "Okta", "Observability", "Prometheus", "CI/CD"]
-    link: "#"
-    link_text: "Repo →"
-  
-  - title: "Approval-Gated Infrastructure Deployment Pipeline"
-    description: "Built a Jira-gated Terraform plan/apply pipeline with structured change management: plans are generated per environment, reviewed by Gemini AI for risk, uploaded to S3, and applied only after approval reaches 'Deployment Window' status. Includes Slack notifications, auto-cancellation on rejection, and full audit trail."
-    tags: ["Terraform", "Jenkins", "Jira", "Gemini AI", "S3", "Slack", "Change Management"]
-    link: "#"
-    link_text: "Case Study →"
 
   - title: "Liquibase Change Management for Snowflake"
     description: "Built an approval-based change management workflow for Snowflake using Liquibase — enabling tracked, auditable schema and data changes with PR validation, CODEOWNERS enforcement, and CI/CD pipelines."
     tags: ["Liquibase", "Snowflake", "CI/CD", "Change Management", "Bitbucket"]
-    link: "#"
-    link_text: "Case Study →"
 
-  - title: "AI-Powered AWS Asset Lookup via Slack"
-    description: "Built a Slack bot for instant AWS resource lookups during incident debugging — ask natural-language questions and get real-time answers across multiple accounts using LangGraph agents and MCP (AWS Cloud Control API), eliminating console context-switching."
-    tags: ["LangGraph", "MCP", "AWS", "Slack Bot", "FastAPI", "LiteLLM", "Python"]
-    link: "#"
-    link_text: "Details →"
-
+# Skills: stack order for platform roles — orchestration → cloud → delivery → observe → cost → code → people → learning
 skills:
-  - category: "Cloud Platforms"
-    description: "AWS: EKS, EC2, ALB, S3, IAM, SQS, Batch, EBS, EFS; Bottlerocket OS · GCP"
-  
   - category: "Container Orchestration"
     description: "Kubernetes (Karpenter, Ingress, pod scheduling, health checks)"
-  
+
+  - category: "Cloud Platforms"
+    description: "AWS: EKS, EC2, ALB, S3, IAM, SQS, Batch, EBS, EFS; Bottlerocket OS · GCP"
+
   - category: "Automation & CI/CD"
     description: "Jenkins, GitOps, Liquibase, Bytebase, Harness, CloudFormation, custom CLI scripts"
-  
+
   - category: "Monitoring & Observability"
     description: "New Relic (NRQL), Kubecost, Loggly, custom alerting solutions"
-  
-  - category: "Scripting & Programming"
-    description: "Python, Bash, AWS SDK (boto3)"
-  
+
   - category: "Cost & Reliability"
     description: "Reserved instances, EBS snapshot replication, image prefetching, ingress health checks (gRPC)"
-  
+
+  - category: "Scripting & Programming"
+    description: "Python, Bash, AWS SDK (boto3)"
+
   - category: "Collaboration"
     description: "Jira documentation, cross‑team onboarding · SME for Kafka & SQS"
-  
+
   - category: "Courses & Certs"
     items:
       - "Google Kubernetes Engine"
@@ -150,6 +149,7 @@ highlights:
       - "Go-to person for CI/CD across engineering teams — pipeline design, build optimization, agent setup, and troubleshooting."
       - "Partnered with teams to debug pod scheduling & optimize resource allocation."
 
+# Experience: reverse chronological. Observe bullets: scope → change discipline → CI platform → gated change → AI assist → data plane
 experience:
   - company: "Observe.AI"
     role: "DevOps/Platform"
@@ -158,9 +158,9 @@ experience:
     items:
       - "Managed 15+ multi-region EKS production clusters with 100+ microservices — handling node pool isolation, Karpenter autoscaling, PDBs, and resource right-sizing."
       - "Delivered 175+ production infrastructure changes with zero downtime via structured change management process."
-      - "Built an AI-powered Slack bot for instant AWS resource lookups during incident debugging — natural-language queries across multiple accounts using LangGraph agents and MCP, eliminating console context-switching."
-      - "Built a Jira-gated Terraform plan/apply pipeline with AI-powered risk review, S3 plan storage, Slack notifications, and auto-cancellation — changes applied only after approval reaches deployment window."
       - "Owned Jenkins CI/CD infrastructure on Kubernetes — multi-EKS agents, ALB ingress, Okta SSO, observability integrations, and pipeline optimization for faster builds."
+      - "Built a Jira-gated Terraform plan/apply pipeline with AI-powered risk review, S3 plan storage, Slack notifications, and auto-cancellation — changes applied only after approval reaches deployment window."
+      - "Built an AI-powered Slack bot for instant AWS resource lookups during incident debugging — natural-language queries across multiple accounts using LangGraph agents and MCP, eliminating console context-switching."
       - "Designed an approval-based Snowflake change management workflow using Liquibase with PR validation, CODEOWNERS enforcement, and CI/CD pipelines for auditable schema changes."
 
   - company: "Amagi Media Labs"
@@ -182,7 +182,7 @@ experience:
     location: "E0 225, Design & Analysis of Algorithms · 80+ students"
     description: "Tutorials & evaluation."
     additional_period: "Jan 2023 – Apr 2023"
-    additional_location: "E0 208, Computational Geometry) · 60+ students"
+    additional_location: "E0 208, Computational Geometry · 60+ students"
     additional_description: "Evaluation & invigilation."
   
   - company: "Exadatum"

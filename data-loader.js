@@ -120,16 +120,24 @@ class PortfolioDataLoader {
     if (!el) return;
 
     el.innerHTML = projects
-      .map(
-        (project) => `
+      .map((project) => {
+        const raw = String(project.link ?? '').trim();
+        const hasLink = raw.length > 0 && raw !== '#';
+        const label = String(project.link_text || 'View')
+          .replace(/\s*→\s*$/, '')
+          .trim() || 'View';
+        const linkRow = hasLink
+          ? `<a class="link-arrow" href="${escapeAttr(raw)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} →</a>`
+          : '';
+        return `
       <article class="card project-card">
         <h3>${project.title || 'Untitled'}</h3>
         <p class="muted">${project.description || ''}</p>
         <div class="tag-row">${Array.isArray(project.tags) ? project.tags.map((tag) => `<span class="tag">${tag}</span>`).join('') : ''}</div>
-        <a class="link-arrow" href="${project.link || '#'}">${project.link_text || 'View'} →</a>
+        ${linkRow}
       </article>
-    `
-      )
+    `;
+      })
       .join('');
   }
 
@@ -269,6 +277,11 @@ class PortfolioDataLoader {
       <div class="contact-links">
         <a class="contact-chip" href="${contact.linkedin || '#'}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="contact-chip" href="${contact.hackerrank || '#'}" target="_blank" rel="noopener noreferrer">HackerRank</a>
+        ${
+          contact.portfolio
+            ? `<a class="contact-chip" href="${escapeAttr(contact.portfolio)}" target="_blank" rel="noopener noreferrer">Portfolio</a>`
+            : ''
+        }
       </div>
     `;
 

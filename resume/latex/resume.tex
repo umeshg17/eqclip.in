@@ -11,12 +11,12 @@
 \begin{document}
 
 %----------------------------------------------------------------------------------------
-%	OBJECTIVE
+%	PROFESSIONAL SUMMARY
 %----------------------------------------------------------------------------------------
 
-\begin{rSection}{OBJECTIVE}
+\begin{rSection}{Professional Summary}
 
-{Platform-leaning DevOps engineer (M.Tech CSA, IISc) with production work on AWS EKS, Kubernetes, GitOps, and CI/CD. Comfortable owning reliability, cost, and delivery automation with clear hand-offs to product teams. Targeting infrastructure, platform, or cloud engineering roles.}
+{M.Tech CSA (IISc) engineer focused on reliable platform delivery at scale: multi-region EKS, Kubernetes operations, GitOps, and CI/CD (Jenkins, Argo CD). Emphasis on cost-aware design, observability, and automation with clear ownership. Seeking infrastructure, platform, or cloud engineering roles (IC).}
 
 \end{rSection}
 %----------------------------------------------------------------------------------------
@@ -26,19 +26,19 @@
 
 
 %----------------------------------------------------------------------------------------
-% TECHINICAL STRENGTHS	
+% TECHNICAL STRENGTHS
 %----------------------------------------------------------------------------------------
 \begin{rSection}{SKILLS}
 
 \begin{tabular}{ @{} >{\bfseries}l @{\hspace{6ex}} l }
 Programming & Python, Bash; C (coursework) \\
-Containers & Docker; Kubernetes (CKA); Helm \\
-Cloud & AWS (EKS, EC2, load balancing, IAM for workloads); GCP exposure (GKE, Dataproc) \\
+Containers & Docker; Kubernetes (CKA); Helm; Karpenter (node/workload scaling) \\
+Cloud & AWS (EKS, EC2, ALB/S3/IAM for workloads); GCP exposure (GKE, Dataproc) \\
 IaC & Pulumi (primary at prior role), Terraform (modules / add-ons) \\
-CI/CD & Jenkins, Bitbucket Pipelines, Argo CD, Git-style infra changes \\
+CI/CD & Jenkins, Bitbucket Pipelines, Argo CD; PR-reviewed Git workflows for infrastructure \\
 Security & Kubernetes RBAC, workload identity patterns, image scanning in pipelines \\
 Automation & REST/CLI tooling, Liquibase in pipelines, Slack-based deploy helpers \\
-Observability & Metrics, logs, alerting; cost visibility (e.g., Kubecost-style dashboards) \\
+Observability & Metrics, logs, alerting; New Relic (NRQL); cost visibility (e.g., Kubecost) \\
 Data (prior role) & Kafka, Spark \\
 Learning & OpenShift (exploring)
 \end{tabular}
@@ -47,17 +47,17 @@ Learning & OpenShift (exploring)
 
 \begin{rSection}{EXPERIENCE}
 
-\textbf{DevOps / Platform Engineer} \hfill Sep 2024 -- present\\
+\textbf{DevOps / Platform Engineer} \hfill Sep 2024 -- Present\\
 Observe.AI \hfill \textit{Bengaluru, Karnataka, IN}
 
 \begin{itemize}
     \itemsep -3pt {} 
     \item Managed 15+ multi-region EKS production clusters with 100+ microservices --- node pool isolation, Karpenter autoscaling, PDBs, and resource right-sizing.
-    \item Delivered 175+ production infrastructure changes with zero downtime via structured change management process.
-    \item Built a Jira-gated Terraform plan/apply pipeline with AI-powered risk review, S3 plan storage, Slack notifications, and auto-cancellation --- changes applied only after approval reaches deployment window.
-    \item Owned Jenkins CI/CD infrastructure on Kubernetes --- multi-EKS agents, ALB ingress, Okta SSO, observability integrations, and pipeline optimization for faster builds.
-    \item Built an AI-powered Slack bot for instant AWS resource lookups during incident debugging --- natural-language queries across multiple accounts using LangGraph agents and MCP.
-    \item Designed an approval-based Snowflake change management workflow using Liquibase with PR validation, CODEOWNERS enforcement, and CI/CD pipelines.
+    \item Delivered 175+ production infrastructure changes with zero downtime through a structured change-management process.
+    \item Owned Jenkins CI/CD on Kubernetes --- multi-EKS agents, ALB ingress, Okta SSO, observability integrations, and pipeline tuning for faster builds.
+    \item Built a Jira-gated Terraform plan/apply pipeline with AI-powered risk review, S3 plan storage, Slack notifications, and auto-cancellation --- changes applied only after approval reaches the deployment window.
+    \item Built an AI-powered Slack bot for fast AWS resource lookups in incidents --- natural-language queries across accounts via LangGraph agents and MCP, reducing console context switching.
+    \item Designed an approval-based Snowflake change workflow with Liquibase --- PR validation, CODEOWNERS, CI/CD integration, and auditable schema changes.
 \end{itemize}
 
 
@@ -67,26 +67,48 @@ Amagi Media Labs \hfill \textit{Bengaluru, Karnataka, IN}
 
 \begin{itemize}
     \itemsep -3pt {} 
-    \item Helped extend GitOps-style delivery with Argo CD, adding image scan and policy checks before promotion to selected environments.
-    \item Participated in Kubernetes upgrades and add-on rollouts with staged applies, health checks, and documented rollback steps.
-    \item Deployed AWS Load Balancer Controller and ingress objects for predictable routing to internal services.
-    \item Built Slack-backed tooling for guarded, on-demand deploys with basic audit trail (who/when/what).
-    \item Added dashboards and alerts around PRs, releases, and spend together with existing SRE/on-call practices.
-    \item Used Pulumi for infrastructure changes where the platform team had standardized stacks.
+    \item Shipped GitOps improvements with Argo CD --- image scanning and policy checks before promotion to target environments.
+    \item Ran staged Kubernetes upgrades and add-on rollouts with health checks and documented rollback paths.
+    \item Rolled out AWS Load Balancer Controller and ingress for predictable routing to internal services.
+    \item Built Slack-backed tooling for guarded, on-demand deploys with a lightweight audit trail (who/when/what).
+    \item Partnered with SRE to add dashboards and alerts for PRs, releases, and cloud spend alongside on-call practices.
+    \item Shipped infrastructure changes using the platform team's standardized Pulumi stacks.
 \end{itemize}
 
+\textbf{Teaching Assistant} \hfill Aug 2022 -- Apr 2023\\
+Indian Institute of Science \hfill \textit{Bengaluru}
+
+\begin{itemize}
+    \itemsep -3pt {}
+    \item E0 225 (\textit{Design \& Analysis of Algorithms}): tutorials and evaluation; cohort of 80+ students.
+    \item E0 208 (\textit{Computational Geometry}): evaluation and invigilation; cohort of 60+ students.
+\end{itemize}
 
 
 \textbf{Big Data Engineer} \hfill July 2019 -- Apr 2020\\
 Exadatum \hfill \textit{Pune, Maharashtra, IN}
- \begin{itemize}
-    \itemsep -3pt {} 
-     \item Built a Docker-based Spark + Livy setup for notebook-driven jobs so the team could iterate before paying for Dataproc clusters.
-     \item Consolidated related Java modules and added JUnit coverage around Kafka $\rightarrow$ GCS ingestion paths.
- \end{itemize}
+
+\begin{itemize}
+    \itemsep -3pt {}
+    \item Built a Docker-based Spark + Livy setup for notebook-driven jobs so the team could iterate before paying for Dataproc clusters.
+    \item Consolidated related Java modules and added JUnit coverage around Kafka $\rightarrow$ GCS ingestion paths.
+    \item Delivered POCs across Dataproc/Livy REST, GKE deploy scripts (logs to GCS), and multi-user JupyterHub (details on request).
+\end{itemize}
 
 
 \end{rSection} 
+
+%----------------------------------------------------------------------------------------
+\begin{rSection}{Selected public work}
+
+\begin{itemize}
+    \itemsep -3pt {}
+    \item \textbf{jenkins-k8s-agent-helm} --- Jenkins inbound agents on Kubernetes (WebSocket, IRSA, optional Karpenter). \href{https://github.com/SkaleKontrol/jenkins-k8s-agent-helm}{github.com/SkaleKontrol/jenkins-k8s-agent-helm}
+    \item \textbf{ECR + Bottlerocket EBS snapshot} --- encrypted volume snapshot with image pre-pull for faster EKS node bring-up. \href{https://github.com/SkaleKontrol/ecr-bottlerocket-ebs-snapshot}{github.com/SkaleKontrol/ecr-bottlerocket-ebs-snapshot}
+    \item \textbf{klabctl} --- kubeadm-based multi-node Kubernetes lab on Multipass. \href{https://github.com/SkaleKontrol/klabctl}{github.com/SkaleKontrol/klabctl}
+\end{itemize}
+
+\end{rSection}
 
 %----------------------------------------------------------------------------------------
 %	WORK EXPERIENCE SECTION
@@ -125,7 +147,7 @@ Exadatum \hfill \textit{Pune, Maharashtra, IN}
 \begin{itemize}
     \item Relevant coursework: Network and Distributed Systems Security, Principles of Distributed Software, Scalable Systems for Data Science.
     \item Coursework and readings on distributed systems, fault tolerance, storage, and messaging at scale.
-    \item Teaching Assistant for \textit{Computational Geometry}: Evaluated assignments and provided guidance to over 100 UG, M.Tech, and Ph.D. students, addressing assignment-related queries and ensuring timely feedback.
+    \item Teaching Assistant, \textit{Computational Geometry}: graded work and supported 100+ students (UG, M.Tech, Ph.D.) with timely feedback on assignments.
 \end{itemize}
 
 {\bf Bachelor of Engineering - Computer Science}, MGM's COE Nanded \hfill {July 2019}
