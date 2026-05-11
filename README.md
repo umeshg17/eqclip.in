@@ -124,6 +124,19 @@ The portfolio can be deployed to any static hosting service:
 
 Just upload all files and the portfolio will work immediately.
 
+### GitHub Pages and custom domain (`umesh.skalekontrol.com`)
+
+This repo uses GitHub Actions (`.github/workflows/deploy-pages.yml`) to publish to GitHub Pages. The [`CNAME`](CNAME) file tells GitHub which hostname to serve.
+
+1. **Repository** — Settings → Pages: Source must be **GitHub Actions** (not “Deploy from a branch”).
+2. **Custom domain** — Settings → Pages → Custom domain: enter `umesh.skalekontrol.com` and save (GitHub reads `CNAME` from the site after deploy; you can also set it here).
+3. **DNS (at `skalekontrol.com`)** — Add a **CNAME** record:
+   - **Name / host:** `umesh` (or `umesh.skalekontrol.com`, depending on your DNS provider)
+   - **Target / points to:** `umeshg17.github.io`
+4. Wait for DNS to propagate, then enable **Enforce HTTPS** in Pages settings once the certificate is issued.
+
+Remove or update any old hostname (for example `umesh.eqclip.in`) so it does not conflict with the new site.
+
 ## Browser Compatibility
 
 - Modern browsers (Chrome, Firefox, Safari, Edge)
