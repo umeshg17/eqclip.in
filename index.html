@@ -74,7 +74,7 @@
         <a href="#skills">Skills</a>
         <a href="#highlights">Highlights</a>
         <a href="#experience">Experience</a>
-        <a href="#leetcode">LeetCode</a>
+        <a href="#leetcode" hidden>LeetCode</a>
         <a href="#contact">Contact</a>
         <button id="themeBtn" class="theme-toggle" title="Toggle theme">🌓</button>
       </nav>
@@ -155,8 +155,8 @@
       </div>
     </section>
 
-    <!-- LeetCode Rank -->
-    <section id="leetcode">
+    <!-- LeetCode: remove `hidden` below and set ENABLE_LEETCODE in data-loader.js -->
+    <section id="leetcode" hidden>
       <h2>LeetCode Progress</h2>
       <div class="card">
         <div style="margin-bottom: 1rem;">
@@ -254,7 +254,7 @@
     });
 
     // Quick section jump with '/'
-    const map = { projects:'#projects', skills:'#skills', experience:'#experience', leetcode:'#leetcode', contact:'#contact' };
+    const map = { projects:'#projects', skills:'#skills', experience:'#experience', contact:'#contact' };
     let buffer = '';
     window.addEventListener('keydown', (e)=>{
       if(e.key === '/') { e.preventDefault(); buffer=''; return; }

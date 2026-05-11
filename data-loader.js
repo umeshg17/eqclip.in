@@ -1,4 +1,7 @@
 // YAML Data Loader for Portfolio
+/** Set true to load rank data; also remove `hidden` from the LeetCode nav link and section in index.html. */
+const ENABLE_LEETCODE = false;
+
 class PortfolioDataLoader {
   constructor() {
     this.data = null;
@@ -73,8 +76,9 @@ class PortfolioDataLoader {
     // Populate footer
     this.populateFooter();
     
-    // Load LeetCode rank chart (this will handle scrolling after chart loads)
-    this.loadLeetCodeChart();
+    if (ENABLE_LEETCODE) {
+      this.loadLeetCodeChart();
+    }
     
     // Fallback: Ensure we scroll to hash after all content is populated
     // This handles cases where chart loads quickly or if there are other async operations
@@ -294,6 +298,7 @@ class PortfolioDataLoader {
   }
 
   async loadLeetCodeChart() {
+    if (!ENABLE_LEETCODE) return;
     try {
       // Avoid CDN/browser caching so we always read the latest file
       const response = await fetch(`leetcode-rank-data.json?ts=${Date.now()}`, { cache: 'no-store' });
