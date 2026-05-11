@@ -67,9 +67,9 @@ projects:
     tags: ["Helm", "Jenkins", "Kubernetes", "WebSocket", "IRSA", "Karpenter"]
     link: "https://github.com/SkaleKontrol/jenkins-k8s-agent-helm"
     link_text: "GitHub →"
-  - title: "GitOps Jenkins on EKS"
-    description: "Helm-based Jenkins with Job DSL sidecar syncing, ScriptApproval auto-approver, ALB ingress, Okta SSO."
-    tags: ["Helm", "EKS", "ALB", "Job DSL"]
+  - title: "Setting up Jenkins"
+    description: "Built and customized an organization-specific Jenkins platform on Kubernetes with multi-EKS agents, ALB ingress, Okta SSO, and observability integration; used extensively for CI/CD and infrastructure utility workflows."
+    tags: ["Jenkins", "Kubernetes", "Helm", "EKS", "ALB", "Okta", "Observability", "Prometheus", "CI/CD"]
     link: "#"
     link_text: "Repo →"
   
@@ -78,30 +78,6 @@ projects:
     tags: ["Liquibase", "Bitbucket", "Postgres"]
     link: "#"
     link_text: "Case Study →"
-  
-  - title: "Containerd Deep Dive Notes"
-    description: "Namespaces, snapshotters, CNI/CSI interactions, and troubleshooting playbook for EKS."
-    tags: ["containerd", "CNI", "K8s"]
-    link: "#"
-    link_text: "Read →"
-  
-  - title: "Food Delivery (PODS)"
-    description: "Deployed and connected multiple microservices using Docker & Kubernetes. Course project under Prof. K. V. Raghavan."
-    tags: ["Docker", "Kubernetes"]
-    link: "#"
-    link_text: "Summary →"
-  
-  - title: "Data Quality & Analysis (SSDS)"
-    description: "RDD-based transformations in PySpark for data quality checks and fundamental analysis. Under Prof. Yogesh Simmhan."
-    tags: ["PySpark", "Spark"]
-    link: "#"
-    link_text: "Notebook →"
-  
-  - title: "Skyline Points & Closest Pair (SSDS)"
-    description: "Distributed implementations on Spark + HDFS for skyline point set and closest pair problems."
-    tags: ["Spark", "HDFS"]
-    link: "#"
-    link_text: "Report →"
 
 skills:
   - category: "Cloud Platforms"
