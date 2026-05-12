@@ -44,12 +44,28 @@ footer:
   message: "Built simple, reliable, and efficient (just like good infrastructure)"
 
 certifications:
-  - title: "Google IT Automation with Python"
-    subtitle: "Coursera Professional Certificate"
-    url: "https://www.credly.com/badges/75d9811c-198b-4dc5-a41d-dd3a6e6d9ee3/public_url"
   - title: "Certified Kubernetes Administrator (CKA)"
     subtitle: "CNCF / The Linux Foundation"
     url: "https://www.credly.com/badges/5e298069-3cc7-4a4b-b30c-79a8ae8f624f/public_url"
+    image: "assets/certs/cka.png"
+    pdf: "assets/certs/cka.pdf"
+  - title: "Google IT Automation with Python"
+    subtitle: "Coursera Professional Certificate"
+    url: "https://www.credly.com/badges/75d9811c-198b-4dc5-a41d-dd3a6e6d9ee3/public_url"
+    image: "assets/certs/google-it-automation-python.png"
+    pdf: "assets/certs/google-it-automation-python.pdf"
+  - title: "Jenkins CI/CD Bootcamp"
+    subtitle: "Udemy"
+    image: "assets/certs/udemy-certificate.png"
+    pdf: "assets/certs/udemy-certificate.pdf"
+  - title: "Git Started with GitHub"
+    subtitle: "Udemy"
+    image: "assets/certs/udemy-git-github.png"
+    pdf: "assets/certs/udemy-git-github.pdf"
+  - title: "Liquibase and the CI/CD Process"
+    subtitle: "Liquibase"
+    image: "assets/certs/liquibase-cicd-process.png"
+    pdf: "assets/certs/liquibase-cicd-process.pdf"
 
 # Projects: flagship case studies first (AI ops assist → gated infra), then public repos, then remaining work
 projects:

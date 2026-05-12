@@ -230,20 +230,133 @@ class PortfolioDataLoader {
     section.hidden = false;
     if (navLink) navLink.hidden = false;
 
-    el.innerHTML = certs
-      .map((c) => {
-        const title = escapeHtml(c.title || '');
-        const subtitle = escapeHtml(c.subtitle || '');
-        const url = escapeAttr(c.url || '#');
-        return `
-      <div class="card cert-card">
-        <h3>${title}</h3>
-        <p class="muted">${subtitle}</p>
-        <a class="link-arrow" href="${url}" target="_blank" rel="noopener noreferrer">Verify on Credly →</a>
+    const slideWidth = 60; // percent per slide
+    const n = certs.length;
+
+    const slidesHtml = certs.map((c, i) => {
+      const title = escapeHtml(c.title || '');
+      const subtitle = escapeHtml(c.subtitle || '');
+      const url = escapeAttr(c.url || '');
+      const image = escapeAttr(c.image || '');
+      const pdf = escapeAttr(c.pdf || '');
+      const verifyBtn = url && url !== '#'
+        ? `<a class="btn btn-primary cert-btn" href="${url}" target="_blank" rel="noopener noreferrer">Verify</a>`
+        : '';
+      const pdfFilename = pdf
+        ? pdf.split('/').pop().replace('.pdf', '') + '-Umesh_Gaikwad.pdf'
+        : '';
+      const downloadBtn = pdf
+        ? `<a class="btn btn-ghost cert-btn" href="${pdf}" download="${escapeAttr(pdfFilename)}">Download PDF</a>`
+        : '';
+      return `
+      <div class="cert-slide${i === 0 ? ' active' : ''}" data-index="${i}">
+        ${image ? `<img src="${image}" alt="${title}" class="cert-image" />` : ''}
+        <div class="cert-slide-info">
+          <h3>${title}</h3>
+          <p class="muted">${subtitle}</p>
+          <div class="cert-actions">${verifyBtn}${downloadBtn}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const dots = certs.map((_, i) =>
+      `<button class="cert-dot${i === 0 ? ' active' : ''}" data-index="${i}" aria-label="Go to certificate ${i + 1}"></button>`
+    ).join('');
+
+    el.innerHTML = `
+      <div class="cert-carousel">
+        <button class="cert-nav cert-prev" aria-label="Previous certificate">&#8249;</button>
+        <div class="cert-slides">
+          <div class="cert-track">${slidesHtml}</div>
+        </div>
+        <button class="cert-nav cert-next" aria-label="Next certificate">&#8250;</button>
       </div>
+      <div class="cert-dots">${dots}</div>
     `;
-      })
-      .join('');
+
+    let current = 0;
+    const track = el.querySelector('.cert-track');
+    const slideEls = el.querySelectorAll('.cert-slide');
+    const dotEls = el.querySelectorAll('.cert-dot');
+    const slidesContainer = el.querySelector('.cert-slides');
+
+    function getOffset(idx) {
+      const containerCenter = 50;
+      const slideCenter = slideWidth / 2;
+      return -(idx * slideWidth) + containerCenter - slideCenter;
+    }
+
+    function goTo(idx) {
+      slideEls[current].classList.remove('active');
+      dotEls[current].classList.remove('active');
+      current = ((idx % n) + n) % n;
+      slideEls[current].classList.add('active');
+      dotEls[current].classList.add('active');
+      track.style.transform = `translateX(${getOffset(current)}%)`;
+    }
+
+    track.style.transform = `translateX(${getOffset(0)}%)`;
+
+    el.querySelector('.cert-prev').addEventListener('click', () => goTo(current - 1));
+    el.querySelector('.cert-next').addEventListener('click', () => goTo(current + 1));
+    dotEls.forEach((dot) => {
+      dot.addEventListener('click', () => goTo(Number(dot.dataset.index)));
+    });
+
+    slideEls.forEach((slide) => {
+      slide.addEventListener('click', () => {
+        const idx = Number(slide.dataset.index);
+        if (idx !== current) goTo(idx);
+      });
+    });
+
+    // Drag/swipe support
+    let startX = 0;
+    let isDragging = false;
+
+    slidesContainer.style.cursor = 'grab';
+    slidesContainer.style.userSelect = 'none';
+
+    slidesContainer.addEventListener('pointerdown', (e) => {
+      startX = e.clientX;
+      isDragging = true;
+      slidesContainer.style.cursor = 'grabbing';
+    });
+
+    slidesContainer.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      if (Math.abs(e.clientX - startX) > 10) {
+        slidesContainer.setPointerCapture(e.pointerId);
+      }
+    });
+
+    slidesContainer.addEventListener('pointerup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      slidesContainer.style.cursor = 'grab';
+      const diff = e.clientX - startX;
+      if (Math.abs(diff) > 40) {
+        goTo(diff > 0 ? current - 1 : current + 1);
+      }
+    });
+
+    slidesContainer.addEventListener('pointercancel', () => {
+      isDragging = false;
+      slidesContainer.style.cursor = 'grab';
+    });
+
+    slidesContainer.addEventListener('dragstart', (e) => e.preventDefault());
+
+    // Horizontal scroll support
+    let wheelLocked = false;
+    slidesContainer.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaX) < 15 || Math.abs(e.deltaY) > Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      if (wheelLocked) return;
+      wheelLocked = true;
+      goTo(e.deltaX > 0 ? current + 1 : current - 1);
+      setTimeout(() => { wheelLocked = false; }, 800);
+    }, { passive: false });
   }
 
   populateContact() {
